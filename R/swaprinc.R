@@ -72,8 +72,8 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     response_var <- all.vars(original_formula)[1]
 
     # Separate fixed and random effects using gsub and strsplit
+    #https://stackoverflow.com/questions/62966793/how-to-extract-just-the-random-effects-part-of-the-formula-from-lme4
     inp <- deparse(original_formula)
-    #formula_terms <- gsub(" ", "", unlist(strsplit(inp, " \\+", fixed = T)), fixed = T)
     formula_terms <- gsub(" ", "", unlist(strsplit(inp, "+", fixed = T)), fixed = T)
 
     # Identify and separate fixed and random effects
