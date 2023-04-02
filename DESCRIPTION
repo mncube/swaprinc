@@ -15,5 +15,7 @@ Imports:
     dplyr,
     lme4,
     magrittr,
-    nlme,
     tidyselect
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
