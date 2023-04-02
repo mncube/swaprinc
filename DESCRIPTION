@@ -15,6 +15,7 @@ Imports:
     dplyr,
     lme4,
     magrittr,
+    rlang,
     tidyselect
 Suggests: 
     testthat (>= 3.0.0)

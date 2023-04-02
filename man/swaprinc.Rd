@@ -19,7 +19,7 @@ These variables will be swapped out for principal components}
 \item{n_pca_components}{The number of principal components to include in the
 model}
 
-\item{...}{Pass additional arguments arguments}
+\item{...}{Pass additional arguments}
 }
 \value{
 A list with fitted models
