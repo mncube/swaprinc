@@ -22,36 +22,6 @@
 #' n_pca_components = 2)
 swaprinc <- function(data, formula, engine = "stats", pca_vars,
                      n_pca_components, ...) {
-  # # Helper function for model fitting
-  # fit_model <- function(data, formula, engine, ...) {
-  #   if (engine == "stats") {
-  #     lm_model <- try(stats::lm(formula, data), silent = TRUE)
-  #     if (inherits(lm_model, "lm")) {
-  #       return(lm_model)
-  #     } else {
-  #       glm_model <- try(stats::glm(formula, data, ...), silent = TRUE)
-  #       if (inherits(glm_model, "glm")) {
-  #         return(glm_model)
-  #       } else {
-  #         stop("Neither lm nor glm from stats could fit the model.")
-  #       }
-  #     }
-  #   } else if (engine == "lme4") {
-  #     lmer_model <- try(lme4::lmer(formula, data, ...), silent = TRUE)
-  #     if (inherits(lmer_model, "merMod")) {
-  #       return(lmer_model)
-  #     } else {
-  #       glmer_model <- try(lme4::glmer(formula, data, ...), silent = TRUE)
-  #       if (inherits(glmer_model, "merMod")) {
-  #         return(glmer_model)
-  #       } else {
-  #         stop("Neither lmer nor glmer from lme4 could fit the model.")
-  #       }
-  #     }
-  #   } else {
-  #     stop("Invalid engine specified.")
-  #   }
-  # }
 
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
@@ -64,7 +34,7 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
         if (inherits(lm_model, "lm")) {
           return(lm_model)
         } else {
-          stop("Neither lm nor glm from stats could fit the model.")
+          rlang::abort("Neither lm nor glm from stats could fit the model.")
         }
       }
     } else if (engine == "lme4") {
@@ -76,11 +46,11 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
         if (inherits(glmer_model, "merMod")) {
           return(glmer_model)
         } else {
-          stop("Neither lmer nor glmer from lme4 could fit the model.")
+          rlang::abort("Neither lmer nor glmer from lme4 could fit the model.")
         }
       }
     } else {
-      stop("Invalid engine specified.")
+      rlang::abort("Invalid engine specified.")
     }
   }
 
@@ -97,9 +67,6 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   data_pca <- data %>%
     dplyr::select(-tidyselect::one_of(pca_vars)) %>%
     cbind(pca_scores)
-  # data_pca <- data %>%
-  #   dplyr::select(-tidyselect::one_of(pca_vars), dplyr::everything()) %>%
-  #   cbind(pca_scores)
 
   replace_pca_vars_in_formula <- function(formula, pca_vars, pca_terms) {
     original_formula <- stats::as.formula(formula)
