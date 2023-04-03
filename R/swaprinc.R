@@ -120,9 +120,63 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   # Fit the PCA model
   model_pca <- fit_model(data_pca, formula_pca, engine, ...)
 
-  # Compare models
-  # ... (implement comparison metrics here)
+  #Compare Models
+  compare_models <- function(model_raw, model_pca) {
+    # Tidy model output
+    if (inherits(model_raw, "merMod")) {
+      raw_summary <- broom.mixed::glance(model_raw)
+    } else {
+      raw_summary <- broom::glance(model_raw)
+    }
 
-  return(list(model_raw = model_raw, model_pca = model_pca))
+    if (inherits(model_pca, "merMod")) {
+      pca_summary <- broom.mixed::glance(model_pca)
+    } else {
+      pca_summary <- broom::glance(model_pca)
+    }
+
+    # Create comparison metrics data frame
+    if (inherits(model_raw, c("glm", "glmerMod")) & inherits(model_pca, c("glm", "glmerMod"))) {
+      # For glm and glmer models
+      raw_mcfadden_pseudo_r_squared <- 1 - (raw_summary$logLik / raw_summary$null.deviance)
+      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / pca_summary$null.deviance)
+
+      comparison <- data.frame(
+        model = c("Raw", "PCA"),
+        pseudo_r_squared = c(raw_mcfadden_pseudo_r_squared, pca_mcfadden_pseudo_r_squared),
+        AIC = c(raw_summary$AIC, pca_summary$AIC),
+        BIC = c(raw_summary$BIC, pca_summary$BIC)
+      )
+    } else if (inherits(model_raw, "lm") & inherits(model_pca, "lm")) {
+      # For lm models only
+      comparison <- data.frame(
+        model = c("Raw", "PCA"),
+        r_squared = c(raw_summary$r.squared, pca_summary$r.squared),
+        adj_r_squared = c(raw_summary$adj.r.squared, pca_summary$adj.r.squared),
+        AIC = c(raw_summary$AIC, pca_summary$AIC),
+        BIC = c(raw_summary$BIC, pca_summary$BIC)
+      )
+    } else if (inherits(model_raw, "lmerMod") & inherits(model_pca, "lmerMod")) {
+      # For lmer models only
+      comparison <- data.frame(
+        model = c("Raw", "PCA"),
+        logLik = c(raw_summary$logLik, pca_summary$logLik),
+        AIC = c(raw_summary$AIC, pca_summary$AIC),
+        BIC = c(raw_summary$BIC, pca_summary$BIC)
+      )
+    } else {
+      rlang::abort("The two models must be of the same type, either linear (lm or lmer) or generalized linear (glm or glmer).")
+    }
+
+    return(comparison)
+  }
+
+
+  # Get comparison
+  model_comparison <- compare_models(model_raw, model_pca)
+
+  return(list(model_raw = model_raw, model_pca = model_pca, comparison = model_comparison))
+
+
 }
 

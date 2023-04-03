@@ -12,6 +12,8 @@ RoxygenNote: 7.2.3
 URL: https://github.com/mncube/swaprinc
 BugReports: https://github.com/mncube/swaprinc/issues
 Imports: 
+    broom,
+    broom.mixed,
     dplyr,
     lme4,
     magrittr,

@@ -22,8 +22,8 @@ test_that("swaprinc works with logistic regression using stats engine", {
     iris$Species_binary <- ifelse(iris$Species == "setosa", 1, 0)
 
     # Run logistic regression model using stats engine
-    res_logistic <- swaprinc(iris,
-                             "Species_binary ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width",
+    res_logistic <- swaprinc(data = iris,
+                             formula = "Species_binary ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width",
                              engine = "stats",
                              pca_vars = c("Sepal.Length", "Petal.Width"),
                              n_pca_components = 2,
