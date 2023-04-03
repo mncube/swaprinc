@@ -4,7 +4,15 @@
 \alias{swaprinc}
 \title{Swap in Principal Components}
 \usage{
-swaprinc(data, formula, engine = "stats", pca_vars, n_pca_components, ...)
+swaprinc(
+  data,
+  formula,
+  engine = "stats",
+  pca_vars,
+  n_pca_components,
+  norun_raw = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{A dataframe}
@@ -18,6 +26,8 @@ These variables will be swapped out for principal components}
 
 \item{n_pca_components}{The number of principal components to include in the
 model}
+
+\item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
 
 \item{...}{Pass additional arguments}
 }

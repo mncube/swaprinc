@@ -9,6 +9,7 @@
 #' These variables will be swapped out for principal components
 #' @param n_pca_components The number of principal components to include in the
 #' model
+#' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
 #' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
@@ -21,10 +22,7 @@
 #' pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 #' n_pca_components = 2)
 swaprinc <- function(data, formula, engine = "stats", pca_vars,
-                     n_pca_components, ...) {
-
-  swaprinc_internal <- function(data, formula, engine = "stats", pca_vars,
-                                n_pca_components, ..., norun_raw = FALSE) {
+                     n_pca_components, norun_raw = FALSE, ...) {
 
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
@@ -57,13 +55,14 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     }
   }
 
+  # # Fit the regular model conditionally
+  # model_raw <- fit_model(data, formula, engine, ...)
   # Fit the regular model conditionally
   if (!norun_raw) {
     model_raw <- fit_model(data, formula, engine, ...)
   } else {
     model_raw <- NULL
   }
-  # model_raw <- fit_model(data, formula, engine, ...)
 
   # Perform PCA
   pca_data <- data[, pca_vars]
@@ -131,7 +130,9 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   #Compare Models
   compare_models <- function(model_raw, model_pca) {
     # Tidy model output
-    if (inherits(model_raw, "merMod")) {
+    if (is.null(model_raw)){
+      raw_summary <- NULL
+    } else if (inherits(model_raw, "merMod")) {
       raw_summary <- broom.mixed::glance(model_raw)
     } else {
       raw_summary <- broom::glance(model_raw)
@@ -144,7 +145,17 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     }
 
     # Create comparison metrics data frame
-    if (inherits(model_raw, c("glm", "glmerMod")) & inherits(model_pca, c("glm", "glmerMod"))) {
+    if(is.null(model_raw) & inherits(model_pca, c("glm", "glmerMod"))) {
+      # For glm and glmer models
+      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / pca_summary$null.deviance)
+
+      comparison <- data.frame(
+        model = c("PCA"),
+        pseudo_r_squared = c(pca_mcfadden_pseudo_r_squared),
+        AIC = c(pca_summary$AIC),
+        BIC = c(pca_summary$BIC)
+      )
+    } else if (inherits(model_raw, c("glm", "glmerMod")) & inherits(model_pca, c("glm", "glmerMod"))) {
       # For glm and glmer models
       raw_mcfadden_pseudo_r_squared <- 1 - (raw_summary$logLik / raw_summary$null.deviance)
       pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / pca_summary$null.deviance)
@@ -155,6 +166,15 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
         AIC = c(raw_summary$AIC, pca_summary$AIC),
         BIC = c(raw_summary$BIC, pca_summary$BIC)
       )
+    } else if (is.null(model_raw) & inherits(model_pca, "lm")) {
+      # For lm models only
+      comparison <- data.frame(
+        model = c("PCA"),
+        r_squared = c(pca_summary$r.squared),
+        adj_r_squared = c(pca_summary$adj.r.squared),
+        AIC = c(pca_summary$AIC),
+        BIC = c(pca_summary$BIC)
+      )
     } else if (inherits(model_raw, "lm") & inherits(model_pca, "lm")) {
       # For lm models only
       comparison <- data.frame(
@@ -163,6 +183,14 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
         adj_r_squared = c(raw_summary$adj.r.squared, pca_summary$adj.r.squared),
         AIC = c(raw_summary$AIC, pca_summary$AIC),
         BIC = c(raw_summary$BIC, pca_summary$BIC)
+      )
+    } else if (is.null(model_raw) & inherits(model_pca, "lmerMod")){
+      # For lmer models only
+      comparison <- data.frame(
+        model = c("PCA"),
+        logLik = c(pca_summary$logLik),
+        AIC = c(pca_summary$AIC),
+        BIC = c(pca_summary$BIC)
       )
     } else if (inherits(model_raw, "lmerMod") & inherits(model_pca, "lmerMod")) {
       # For lmer models only
@@ -184,8 +212,5 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   model_comparison <- compare_models(model_raw, model_pca)
 
   return(list(model_raw = model_raw, model_pca = model_pca, comparison = model_comparison))
-  }
 
-  # Call the swaprinc_internal function with norun_raw set to FALSE
-  return(swaprinc_internal(data, formula, engine, pca_vars, n_pca_components, ..., norun_raw = FALSE))
 }
