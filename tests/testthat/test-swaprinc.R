@@ -4,8 +4,8 @@ test_that("swaprinc returns correct class for basic lm", {
   data(iris)
 
   #Run basic lm model using stats
-  res <- swaprinc(iris,
-                  "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
+  res <- swaprinc(data = iris,
+                  formula = "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
                   pca_vars = c("Sepal.Width", "Petal.Length"),
                   n_pca_components = 2)
 

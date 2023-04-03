@@ -10,6 +10,8 @@
 #' @param n_pca_components The number of principal components to include in the
 #' model
 #' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
+#' @param center Set center parameter for prcomp
+#' @param scale. Set scale. parameter for prcomp
 #' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
@@ -22,7 +24,8 @@
 #' pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 #' n_pca_components = 2)
 swaprinc <- function(data, formula, engine = "stats", pca_vars,
-                     n_pca_components, norun_raw = FALSE, ...) {
+                     n_pca_components, norun_raw = FALSE, center = TRUE,
+                     scale. = FALSE, ...) {
 
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
@@ -31,7 +34,7 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
       if (inherits(glm_model, "glm")) {
         return(glm_model)
       } else {
-        lm_model <- try(stats::lm(formula, data), silent = TRUE)
+        lm_model <- try(stats::lm(formula, data, ...), silent = TRUE)
         if (inherits(lm_model, "lm")) {
           return(lm_model)
         } else {
@@ -64,8 +67,8 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
 
   # Perform PCA
   pca_data <- data[, pca_vars]
-  pca_result <- stats::princomp(pca_data, cor = TRUE)
-  pca_scores <- pca_result$scores[, 1:n_pca_components]
+  pca_result <- stats::prcomp(pca_data, center = center, scale. = scale., ...)
+  pca_scores <- pca_result$x[, 1:n_pca_components]
   colnames(pca_scores) <- paste0("PC", 1:n_pca_components)
 
   # Replace the original variables with the principal components

@@ -11,6 +11,8 @@ swaprinc(
   pca_vars,
   n_pca_components,
   norun_raw = FALSE,
+  center = TRUE,
+  scale. = FALSE,
   ...
 )
 }
@@ -28,6 +30,10 @@ These variables will be swapped out for principal components}
 model}
 
 \item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
+
+\item{center}{Set center parameter for prcomp}
+
+\item{scale.}{Set scale. parameter for prcomp}
 
 \item{...}{Pass additional arguments}
 }
