@@ -23,6 +23,9 @@
 swaprinc <- function(data, formula, engine = "stats", pca_vars,
                      n_pca_components, ...) {
 
+  swaprinc_internal <- function(data, formula, engine = "stats", pca_vars,
+                                n_pca_components, ..., norun_raw = FALSE) {
+
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
     if (engine == "stats") {
@@ -54,8 +57,13 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     }
   }
 
-  # Fit the regular model
-  model_raw <- fit_model(data, formula, engine, ...)
+  # Fit the regular model conditionally
+  if (!norun_raw) {
+    model_raw <- fit_model(data, formula, engine, ...)
+  } else {
+    model_raw <- NULL
+  }
+  # model_raw <- fit_model(data, formula, engine, ...)
 
   # Perform PCA
   pca_data <- data[, pca_vars]
@@ -176,7 +184,8 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   model_comparison <- compare_models(model_raw, model_pca)
 
   return(list(model_raw = model_raw, model_pca = model_pca, comparison = model_comparison))
+  }
 
-
+  # Call the swaprinc_internal function with norun_raw set to FALSE
+  return(swaprinc_internal(data, formula, engine, pca_vars, n_pca_components, ..., norun_raw = FALSE))
 }
-
