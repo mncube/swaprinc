@@ -1,5 +1,5 @@
-# Test case for compswap using lm engine
-test_that("compswap works correctly with lm engine", {
+# Test case for compswap using lm
+test_that("compswap works correctly with for lm", {
   # Load the iris dataset
   data(iris)
 

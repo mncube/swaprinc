@@ -34,7 +34,7 @@
 compswap <- function(data, formula, engine = "stats", .pca_varlist, .n_pca_list, ...) {
 
   if (length(.pca_varlist) != length(.n_pca_list)) {
-    stop("Length of .pca_varlist and .n_pca_list must be the same.")
+    rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
   }
 
   all_models <- list()

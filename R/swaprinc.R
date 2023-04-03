@@ -55,8 +55,6 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     }
   }
 
-  # # Fit the regular model conditionally
-  # model_raw <- fit_model(data, formula, engine, ...)
   # Fit the regular model conditionally
   if (!norun_raw) {
     model_raw <- fit_model(data, formula, engine, ...)

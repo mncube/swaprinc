@@ -204,7 +204,7 @@ test_that("Test random slopes with variables not included in pca_vars", {
 
 #Test norun_raw option
 # Run tests for stats engine
-test_that("swaprinc returns correct class for basic lm", {
+test_that("swaprinc returns correct class for basic lm for norun_raw = TRUE", {
   #Get iris data
   data(iris)
 
