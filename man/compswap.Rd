@@ -10,11 +10,11 @@ compswap(
   engine = "stats",
   .pca_varlist,
   .n_pca_list,
-  .center_list,
-  .scale._list,
-  .lpca_center_list,
-  .lpca_scale_list,
-  .lpca_undo_list,
+  .center_list = list(TRUE),
+  .scale._list = list(FALSE),
+  .lpca_center_list = list("none"),
+  .lpca_scale_list = list("none"),
+  .lpca_undo_list = list(FALSE),
   ...
 )
 }
