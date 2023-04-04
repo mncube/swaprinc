@@ -12,6 +12,18 @@
 #' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
 #' @param center Set center parameter for prcomp
 #' @param scale. Set scale. parameter for prcomp
+#' @param lpca_center Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
+#' numeric variables will be included in the centering.  Parameter takes values
+#' 'all' to center raw and pca variables, 'raw' to only center variables for the
+#' raw variable model fitting, 'pca' to only center pca_vars before pca regression
+#' model fitting, and 'none' to skip lpca centering.
+#' @param lpca_scale Scale data as in the LearnPCA Step-by-Step PCA vignette.  Only
+#' numeric variables will be included in the scaling.  Parameter takes values
+#' 'all' to scale raw and pca variables, 'raw' to only scale variables for the
+#' raw variable model fitting, 'pca' to only scale pca_vars before pca regression
+#' model fitting, and 'none' to skip lpca scaling.
+#' @param lpca_undo Undo centering and scaling of pca_vars as in the LearnPCA
+#' Step-by-Step PCA vignette.
 #' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
@@ -25,7 +37,41 @@
 #' n_pca_components = 2)
 swaprinc <- function(data, formula, engine = "stats", pca_vars,
                      n_pca_components, norun_raw = FALSE, center = TRUE,
-                     scale. = FALSE, ...) {
+                     scale. = FALSE, lpca_center = "none", lpca_scale = "none",
+                     lpca_undo = FALSE,...) {
+  # Test function parameters
+  if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
+        lpca_center == "pca")){
+    rlang::abort("lpca_center must be set to: 'none', 'all', 'raw', or 'pca'")
+  }
+
+  if (!(lpca_scale == "none" | lpca_scale == "all" | lpca_scale == "raw" |
+        lpca_scale == "pca")){
+    rlang::abort("lpca_center must be set to: 'none', 'all', 'raw', or 'pca'")
+  }
+
+  if(lpca_undo == TRUE & (lpca_scale == "none" | lpca_scale == "raw" |
+                                lpca_center == "none" | lpca_center == "raw" )) {
+    rlang::abort("To use lpca_undo, lpca_scale and lpca_center must be set
+                 to 'all' or 'pca'")
+  }
+
+  # Helper function to get numerics
+  get_nums <- function(df){
+    dplyr::select(df, tidyselect::where(is.numeric))
+  }
+
+  # Helper function to bind processed numeric variables to non numeric variables
+  bind_nums <- function(df_nums, df){
+    dplyr::bind_cols(df_nums, dplyr::select(df, -tidyselect::where(is.numeric)))
+  }
+
+  # Create helper function for lpca center and scale
+  lpca_cs <- function(df, scl, cnt){
+    scale(get_nums(df), scale = scl, center = cnt) %>%
+      as.data.frame() %>%
+      bind_nums(df)
+  }
 
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
@@ -58,6 +104,15 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
     }
   }
 
+  # Scale All Data and Raw Data According to LearnPCA
+  if(lpca_center == "all" | lpca_center == "raw"){
+    data <- lpca_cs(data, scl = FALSE, cnt = TRUE)
+  }
+
+  if(lpca_scale == "all" | lpca_scale == "raw"){
+    data <- lpca_cs(data, scl = TRUE, cnt = FALSE)
+  }
+
   # Fit the regular model conditionally
   if (!norun_raw) {
     model_raw <- fit_model(data, formula, engine, ...)
@@ -66,9 +121,25 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   }
 
   # Perform PCA
+  if(lpca_center == "pca"){
+    data <- lpca_cs(data, scl = FALSE, cnt = TRUE)
+  }
+
+  if(lpca_scale == "pca"){
+    data <- lpca_cs(data, scl = TRUE, cnt = FALSE)
+  }
+
   pca_data <- data[, pca_vars]
   pca_result <- stats::prcomp(pca_data, center = center, scale. = scale., ...)
-  pca_scores <- pca_result$x[, 1:n_pca_components]
+
+  if (lpca_undo == TRUE) {
+    Xhat <- pca_result$x[, 1:n_pca_components] %*% t(pca_result$rotation[, 1:n_pca_components])
+    Xhat <- scale(Xhat, center = FALSE, scale = 1/pca_result$scale)
+    pca_scores <- scale(Xhat, center = -pca_result$center, scale = FALSE)
+    } else {
+    pca_scores <- pca_result$x[, 1:n_pca_components]
+  }
+
   colnames(pca_scores) <- paste0("PC", 1:n_pca_components)
 
   # Replace the original variables with the principal components

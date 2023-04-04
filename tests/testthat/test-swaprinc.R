@@ -202,7 +202,7 @@ test_that("Test random slopes with variables not included in pca_vars", {
   expect_s4_class(res_rs$model_pca, "merMod")
 })
 
-#Test norun_raw option
+# Test norun_raw option
 # Run tests for stats engine
 test_that("swaprinc returns correct class for basic lm for norun_raw = TRUE", {
   #Get iris data
@@ -214,6 +214,27 @@ test_that("swaprinc returns correct class for basic lm for norun_raw = TRUE", {
                   pca_vars = c("Sepal.Width", "Petal.Length"),
                   n_pca_components = 2,
                   norun_raw = TRUE)
+
+  #See if swaprinc returned a list
+  expect_type(res, "list")
+
+
+})
+
+#Test scaling options option
+
+test_that("swaprinc returns correct class for when lpca_center = 'all' &
+          lpca_scale = 'all'", {
+  #Get iris data
+  data(iris)
+
+  #Run basic lm model using stats
+  res <- swaprinc(iris,
+                  "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
+                  pca_vars = c("Sepal.Width", "Petal.Length"),
+                  n_pca_components = 2,
+                  lpca_center = "all",
+                  lpca_scale = "all")
 
   #See if swaprinc returned a list
   expect_type(res, "list")

@@ -13,6 +13,9 @@ swaprinc(
   norun_raw = FALSE,
   center = TRUE,
   scale. = FALSE,
+  lpca_center = "none",
+  lpca_scale = "none",
+  lpca_undo = FALSE,
   ...
 )
 }
@@ -34,6 +37,21 @@ model}
 \item{center}{Set center parameter for prcomp}
 
 \item{scale.}{Set scale. parameter for prcomp}
+
+\item{lpca_center}{Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
+numeric variables will be included in the centering.  Parameter takes values
+'all' to center raw and pca variables, 'raw' to only center variables for the
+raw variable model fitting, 'pca' to only center pca_vars before pca regression
+model fitting, and 'none' to skip lpca centering.}
+
+\item{lpca_scale}{Scale data as in the LearnPCA Step-by-Step PCA vignette.  Only
+numeric variables will be included in the scaling.  Parameter takes values
+'all' to scale raw and pca variables, 'raw' to only scale variables for the
+raw variable model fitting, 'pca' to only scale pca_vars before pca regression
+model fitting, and 'none' to skip lpca scaling.}
+
+\item{lpca_undo}{Undo centering and scaling of pca_vars as in the LearnPCA
+Step-by-Step PCA vignette.}
 
 \item{...}{Pass additional arguments}
 }
