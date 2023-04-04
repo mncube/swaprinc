@@ -15,6 +15,7 @@ Imports:
     broom,
     broom.mixed,
     dplyr,
+    Gifi,
     lme4,
     magrittr,
     rlang,

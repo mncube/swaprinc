@@ -241,3 +241,37 @@ test_that("swaprinc returns correct class for when lpca_center = 'all' &
 
 
 })
+
+
+test_that("swaprinc works with prc_eng set to Gifi", {
+  # Create a small simulated dataset
+  set.seed(42)
+  n <- 50
+  x1 <- rnorm(n)
+  x2 <- rnorm(n)
+  x3 <- rnorm(n)
+  y <- 1 + 2 * x1 + 3 * x2 + rnorm(n)
+  data <- data.frame(y, x1, x2, x3)
+
+  x1q <- stats::quantile(data$x1,c(0,1/3,2/3,1))
+  x2q <- stats::quantile(data$x2,c(0,1/4,3/4,1))
+  x3q <- stats::quantile(data$x3,c(0,2/5,3/5,1))
+
+
+  data <- data %>% dplyr::mutate(x1 = cut(x1, breaks=x1q, labels=c("low","middle","high"),include.lowest = TRUE),
+                          x2 = cut(x2, breaks=x2q, labels=c("small","medium","large"),include.lowest = TRUE),
+                          x3 = cut(x3, breaks=x3q, labels=c("short","average","tall"),include.lowest = TRUE))
+
+  # Run swaprinc with prc_eng set to Gifi
+  swaprinc_result <- swaprinc(data,
+                              formula = "y ~ x1 + x2 + x3",
+                              pca_vars = c("x1", "x2", "x3"),
+                              n_pca_components = 2,
+                              prc_eng = "Gifi")
+
+  # Check that the output is not NULL
+  expect_true(!is.null(swaprinc_result))
+
+  # Chec that swaprinc has correct dimensions
+  expect_equal(length(swaprinc_result), 3)
+})

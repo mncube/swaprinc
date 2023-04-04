@@ -3,6 +3,7 @@
 #' @param data A dataframe
 #' @param formula A quoted model formula
 #' @param engine The engine for fitting the model.  Options are "stats" or"lme4".
+#' @param .prc_eng_list A list of prc_eng values (see swaprinc documentation)
 #' @param .pca_varlist A list of pca_vars (see swaprinc documentation)
 #' @param .n_pca_list A list of n_pca_components (see swaprinc documentation)
 #' @param .center_list A list of center values (see swaprinc documentation)
@@ -102,6 +103,7 @@
 # }
 compswap <- function(data, formula,
                      engine = "stats",
+                     .prc_eng_list = list("stats"),
                      .pca_varlist,
                      .n_pca_list,
                      .center_list = list(TRUE),
@@ -117,6 +119,7 @@ compswap <- function(data, formula,
   }
 
   # Recycle parameters to match the length of .pca_varlist
+  .prc_eng_list <- rep(.prc_eng_list, length.out = n)
   .center_list <- rep(.center_list, length.out = n)
   .scale._list <- rep(.scale._list, length.out = n)
   .lpca_center_list <- rep(.lpca_center_list, length.out = n)
@@ -131,13 +134,14 @@ compswap <- function(data, formula,
   for (i in seq_along(.pca_varlist)) {
     pca_vars <- .pca_varlist[[i]]
     n_pca_components <- .n_pca_list[[i]]
+    prc_eng <- .prc_eng_list[[i]]
     center <- .center_list[[i]]
     scale. <- .scale._list[[i]]
     lpca_center <- .lpca_center_list[[i]]
     lpca_scale <- .lpca_scale_list[[i]]
     lpca_undo <- .lpca_undo_list[[i]]
 
-    swaprinc_result <- swaprinc(data, formula, engine, pca_vars,
+    swaprinc_result <- swaprinc(data, formula, engine, prc_eng, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
                                 scale., lpca_center, lpca_scale, lpca_undo, ...)
 

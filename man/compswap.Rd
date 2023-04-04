@@ -8,6 +8,7 @@ compswap(
   data,
   formula,
   engine = "stats",
+  .prc_eng_list = list("stats"),
   .pca_varlist,
   .n_pca_list,
   .center_list = list(TRUE),
@@ -24,6 +25,8 @@ compswap(
 \item{formula}{A quoted model formula}
 
 \item{engine}{The engine for fitting the model.  Options are "stats" or"lme4".}
+
+\item{.prc_eng_list}{A list of prc_eng values (see swaprinc documentation)}
 
 \item{.pca_varlist}{A list of pca_vars (see swaprinc documentation)}
 

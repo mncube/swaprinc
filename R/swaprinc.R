@@ -4,7 +4,9 @@
 #'
 #' @param data A dataframe
 #' @param formula A quoted model formula
-#' @param engine The engine for fitting the model.  Options are "stats" or"lme4".
+#' @param engine The engine for fitting the model.  Options are 'stats' or 'lme4'.
+#' @param prc_eng Then engine or extracting principal components.  Options are
+#' 'stats' and 'Gifi'.
 #' @param pca_vars Variables to include in the principal component analysis.
 #' These variables will be swapped out for principal components
 #' @param n_pca_components The number of principal components to include in the
@@ -35,7 +37,7 @@
 #' "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
 #' pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 #' n_pca_components = 2)
-swaprinc <- function(data, formula, engine = "stats", pca_vars,
+swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats",pca_vars,
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE,...) {
@@ -140,14 +142,25 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   }
 
   pca_data <- data[, pca_vars]
-  pca_result <- stats::prcomp(pca_data, center = center, scale. = scale., ...)
 
-  if (lpca_undo == TRUE) {
-    Xhat <- pca_result$x[, 1:n_pca_components] %*% t(pca_result$rotation[, 1:n_pca_components])
-    Xhat <- scale(Xhat, center = FALSE, scale = 1/pca_result$scale)
-    pca_scores <- scale(Xhat, center = -pca_result$center, scale = FALSE)
+  # Run prc_eng
+  if (prc_eng == "stats"){
+    pca_result <- stats::prcomp(pca_data, center = center, scale. = scale., ...)
+
+    if (lpca_undo == TRUE) {
+      Xhat <- pca_result$x[, 1:n_pca_components] %*% t(pca_result$rotation[, 1:n_pca_components])
+      Xhat <- scale(Xhat, center = FALSE, scale = 1/pca_result$scale)
+      pca_scores <- scale(Xhat, center = -pca_result$center, scale = FALSE)
     } else {
-    pca_scores <- pca_result$x[, 1:n_pca_components]
+      pca_scores <- pca_result$x[, 1:n_pca_components]
+    }
+
+  } else if (prc_eng == "Gifi") {
+    gifi_results <- Gifi::princals(pca_data, ndim=n_pca_components, ...)
+    pca_scores <- gifi_results$objectscores
+  } else {
+    rlang::abort("Must specify a valid per_engine.  Use 'stats' to call prcomp,
+    or 'Gifi to call princals")
   }
 
   colnames(pca_scores) <- paste0("PC", 1:n_pca_components)

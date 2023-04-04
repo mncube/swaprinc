@@ -8,6 +8,7 @@ swaprinc(
   data,
   formula,
   engine = "stats",
+  prc_eng = "stats",
   pca_vars,
   n_pca_components,
   norun_raw = FALSE,
@@ -24,7 +25,10 @@ swaprinc(
 
 \item{formula}{A quoted model formula}
 
-\item{engine}{The engine for fitting the model.  Options are "stats" or"lme4".}
+\item{engine}{The engine for fitting the model.  Options are 'stats' or 'lme4'.}
+
+\item{prc_eng}{Then engine or extracting principal components.  Options are
+'stats' and 'Gifi'.}
 
 \item{pca_vars}{Variables to include in the principal component analysis.
 These variables will be swapped out for principal components}
