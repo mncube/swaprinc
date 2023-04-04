@@ -105,17 +105,27 @@ swaprinc <- function(data, formula, engine = "stats", pca_vars,
   }
 
   # Scale All Data and Raw Data According to LearnPCA
-  if(lpca_center == "all" | lpca_center == "raw"){
+  if(lpca_center == "all"){
     data <- lpca_cs(data, scl = FALSE, cnt = TRUE)
   }
 
-  if(lpca_scale == "all" | lpca_scale == "raw"){
+  if(lpca_scale == "all"){
     data <- lpca_cs(data, scl = TRUE, cnt = FALSE)
   }
 
   # Fit the regular model conditionally
   if (!norun_raw) {
-    model_raw <- fit_model(data, formula, engine, ...)
+
+    # Scale raw data only according to LearnPCA
+    if(lpca_center == "raw"){
+      df <- lpca_cs(data, scl = FALSE, cnt = TRUE)
+    } else {df <- data}
+
+    if(lpca_scale == "raw"){
+      df <- lpca_cs(df, scl = TRUE, cnt = FALSE)
+    } else {df <- df}
+
+    model_raw <- fit_model(df, formula, engine, ...)
   } else {
     model_raw <- NULL
   }
