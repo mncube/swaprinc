@@ -48,19 +48,80 @@
 #'                             .lpca_center_list = lpca_center_list,
 #'                             .lpca_scale_list = lpca_scale_list,
 #'                             .lpca_undo_list = lpca_undo_list)
+# compswap <- function(data, formula,
+#                      engine = "stats",
+#                      .pca_varlist,
+#                      .n_pca_list,
+#                      .center_list,
+#                      .scale._list,
+#                      .lpca_center_list,
+#                      .lpca_scale_list,
+#                      .lpca_undo_list,...) {
+#
+#   if (length(.pca_varlist) != length(.n_pca_list)) {
+#     rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
+#   }
+#
+#   all_models <- list()
+#   all_comparisons <- data.frame()
+#
+#   norun_raw <- FALSE
+#
+#   for (i in seq_along(.pca_varlist)) {
+#     pca_vars <- .pca_varlist[[i]]
+#     n_pca_components <- .n_pca_list[[i]]
+#     center <- .center_list[[i]]
+#     scale. <- .scale._list[[i]]
+#     lpca_center <- .lpca_center_list[[i]]
+#     lpca_scale <- .lpca_scale_list[[i]]
+#     lpca_undo <- .lpca_undo_list[[i]]
+#
+#     #swaprinc_result <- swaprinc(data, formula, engine, pca_vars, n_pca_components, ..., norun_raw = norun_raw)
+#     swaprinc_result <- swaprinc(data, formula, engine, pca_vars,
+#                                 n_pca_components, norun_raw = norun_raw, center,
+#                                 scale., lpca_center, lpca_scale, lpca_undo, ...)
+#
+#     if (!norun_raw) {
+#       all_models$model_raw <- swaprinc_result$model_raw
+#       norun_raw <- TRUE
+#     }
+#
+#     all_models[[paste0("model_pca_", i)]] <- swaprinc_result$model_pca
+#
+#     comparison_df <- swaprinc_result$comparison
+#     comparison_df$model_set <- paste0("model_pca_", i)
+#     all_comparisons <- rbind(all_comparisons, comparison_df)
+#
+#     # Update the model_set column for the Raw model row
+#     if (i == 1) {
+#       all_comparisons[all_comparisons$model == "Raw", "model_set"] <- "model_raw"
+#     }
+#   }
+#
+#   return(list(all_models = all_models, all_comparisons = all_comparisons))
+# }
 compswap <- function(data, formula,
                      engine = "stats",
                      .pca_varlist,
                      .n_pca_list,
-                     .center_list,
-                     .scale._list,
-                     .lpca_center_list,
-                     .lpca_scale_list,
-                     .lpca_undo_list,...) {
+                     .center_list = list(TRUE),
+                     .scale._list = list(FALSE),
+                     .lpca_center_list = list("none"),
+                     .lpca_scale_list = list("none"),
+                     .lpca_undo_list = list(FALSE),...) {
 
-  if (length(.pca_varlist) != length(.n_pca_list)) {
+  n <- length(.pca_varlist)
+
+  if (length(.n_pca_list) != n) {
     rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
   }
+
+  # Recycle parameters to match the length of .pca_varlist
+  .center_list <- rep(.center_list, length.out = n)
+  .scale._list <- rep(.scale._list, length.out = n)
+  .lpca_center_list <- rep(.lpca_center_list, length.out = n)
+  .lpca_scale_list <- rep(.lpca_scale_list, length.out = n)
+  .lpca_undo_list <- rep(.lpca_undo_list, length.out = n)
 
   all_models <- list()
   all_comparisons <- data.frame()
@@ -76,7 +137,6 @@ compswap <- function(data, formula,
     lpca_scale <- .lpca_scale_list[[i]]
     lpca_undo <- .lpca_undo_list[[i]]
 
-    #swaprinc_result <- swaprinc(data, formula, engine, pca_vars, n_pca_components, ..., norun_raw = norun_raw)
     swaprinc_result <- swaprinc(data, formula, engine, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
                                 scale., lpca_center, lpca_scale, lpca_undo, ...)
@@ -92,7 +152,6 @@ compswap <- function(data, formula,
     comparison_df$model_set <- paste0("model_pca_", i)
     all_comparisons <- rbind(all_comparisons, comparison_df)
 
-    # Update the model_set column for the Raw model row
     if (i == 1) {
       all_comparisons[all_comparisons$model == "Raw", "model_set"] <- "model_raw"
     }
