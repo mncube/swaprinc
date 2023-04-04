@@ -13,12 +13,24 @@ test_that("compswap works correctly with for lm", {
   # Define the n_pca_list
   n_pca_list <- list(2, 2)
 
+  # Set scaling values
+  center_list <- list(TRUE, TRUE)
+  scale._list <- list(FALSE, FALSE)
+  lpca_center_list <- list("none", "none")
+  lpca_scale_list <- list("none", "none")
+  lpca_undo_list <- list(FALSE, FALSE)
+
   # Run compswap
   compswap_results <- compswap(data = iris,
                                formula = formula,
                                engine = "stats",
                                .pca_varlist = pca_varlist,
-                               .n_pca_list = n_pca_list)
+                               .n_pca_list = n_pca_list,
+                               .center_list = center_list,
+                               .scale._list = scale._list,
+                               .lpca_center_list = lpca_center_list,
+                               .lpca_scale_list = lpca_scale_list,
+                               .lpca_undo_list = lpca_undo_list)
 
   # Check if the output is a list with the expected length
   expect_type(compswap_results, "list")
