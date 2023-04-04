@@ -6,11 +6,14 @@
 #' @param formula A quoted model formula
 #' @param engine The engine for fitting the model.  Options are 'stats' or 'lme4'.
 #' @param prc_eng Then engine or extracting principal components.  Options are
-#' 'stats' and 'Gifi'.
+#' 'stats', 'Gifi', and 'stats_Gifi'.  The stats_Gifi engine uses
+#' tidyselect::where(is.numeric) to select the pca_vars for stats::prcomp and
+#' -tidyselect::where(is.numeric) to select the pca_vars for Gifi::princals.
 #' @param pca_vars Variables to include in the principal component analysis.
 #' These variables will be swapped out for principal components
 #' @param n_pca_components The number of principal components to include in the
-#' model
+#' model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
+#' vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).
 #' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
 #' @param center Set center parameter for prcomp
 #' @param scale. Set scale. parameter for prcomp
@@ -37,7 +40,7 @@
 #' "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
 #' pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 #' n_pca_components = 2)
-swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats",pca_vars,
+swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_vars,
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE,...) {
@@ -141,24 +144,49 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats",pca_vars
     data <- lpca_cs(data, scl = TRUE, cnt = FALSE)
   }
 
+  # Get PCA data
   pca_data <- data[, pca_vars]
 
-  # Run prc_eng
-  if (prc_eng == "stats"){
-    pca_result <- stats::prcomp(pca_data, center = center, scale. = scale., ...)
+  # Extraction helper functions
+  extract_stats <- function(df = pca_data, comps = n_pca_components, ...){
+    pca_result <- stats::prcomp(df, center = center, scale. = scale., ...)
 
     if (lpca_undo == TRUE) {
-      Xhat <- pca_result$x[, 1:n_pca_components] %*% t(pca_result$rotation[, 1:n_pca_components])
+      Xhat <- pca_result$x[, 1:comps] %*% t(pca_result$rotation[, 1:comps])
       Xhat <- scale(Xhat, center = FALSE, scale = 1/pca_result$scale)
       pca_scores <- scale(Xhat, center = -pca_result$center, scale = FALSE)
     } else {
-      pca_scores <- pca_result$x[, 1:n_pca_components]
+      pca_scores <- pca_result$x[, 1:comps]
     }
+  }
 
-  } else if (prc_eng == "Gifi") {
-    gifi_results <- Gifi::princals(pca_data, ndim=n_pca_components, ...)
+  extract_Gifi <- function(df = pca_data, comps = n_pca_components, ...){
+    gifi_results <- Gifi::princals(df, ndim=comps, ...)
     pca_scores <- gifi_results$objectscores
-  } else {
+  }
+
+  # Run prc_eng
+  if (prc_eng == "stats"){
+    pca_scores <- extract_stats()
+  } else if (prc_eng == "Gifi") {
+    pca_scores <- extract_Gifi()
+  } else if (prc_eng == "stats_Gifi"){
+
+    #stats
+    pca_data_stats <- pca_data %>% dplyr::select(tidyselect::where(is.numeric))
+    pca_scores_stats <- extract_stats(df = pca_data_stats,
+                                      comps = n_pca_components[["stats"]])
+
+    #Gifi
+    pca_data_Gifi <- pca_data %>% dplyr::select(-tidyselect::where(is.numeric))
+    pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
+                                    comps = n_pca_components[["Gifi"]])
+
+    #Collapse
+    pca_scores <- cbind(pca_scores_stats, pca_scores_Gifi)
+    n_pca_components <- sum(n_pca_components)
+
+  }else {
     rlang::abort("Must specify a valid per_engine.  Use 'stats' to call prcomp,
     or 'Gifi to call princals")
   }

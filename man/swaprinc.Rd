@@ -28,13 +28,16 @@ swaprinc(
 \item{engine}{The engine for fitting the model.  Options are 'stats' or 'lme4'.}
 
 \item{prc_eng}{Then engine or extracting principal components.  Options are
-'stats' and 'Gifi'.}
+'stats', 'Gifi', and 'stats_Gifi'.  The stats_Gifi engine uses
+tidyselect::where(is.numeric) to select the pca_vars for stats::prcomp and
+-tidyselect::where(is.numeric) to select the pca_vars for Gifi::princals.}
 
 \item{pca_vars}{Variables to include in the principal component analysis.
 These variables will be swapped out for principal components}
 
 \item{n_pca_components}{The number of principal components to include in the
-model}
+model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
+vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).}
 
 \item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
 
