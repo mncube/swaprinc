@@ -11,6 +11,7 @@
 #' @param .lpca_center_list A list of lpca_center values (see swaprinc documentation)
 #' @param .lpca_scale_list A list of lpca_scale values (see swaprinc documentation)
 #' @param .lpca_undo_list A list of lpca_undo values (see swaprinc documentation)
+#' @param .no_tresp_list A list of no_tresp values (see swaprinc documentation)
 #' @param ... Pass additional arguments to the swaprinc function
 #'
 #' @return A list containing a list of fitted models and a comparison metrics
@@ -110,7 +111,8 @@ compswap <- function(data, formula,
                      .scale._list = list(FALSE),
                      .lpca_center_list = list("none"),
                      .lpca_scale_list = list("none"),
-                     .lpca_undo_list = list(FALSE),...) {
+                     .lpca_undo_list = list(FALSE),
+                     .no_tresp_list = list(FALSE),...) {
 
   n <- length(.pca_varlist)
 
@@ -125,6 +127,7 @@ compswap <- function(data, formula,
   .lpca_center_list <- rep(.lpca_center_list, length.out = n)
   .lpca_scale_list <- rep(.lpca_scale_list, length.out = n)
   .lpca_undo_list <- rep(.lpca_undo_list, length.out = n)
+  .no_tresp_list <- rep(.no_tresp_list, length.out = n)
 
   all_models <- list()
   all_comparisons <- data.frame()
@@ -140,10 +143,12 @@ compswap <- function(data, formula,
     lpca_center <- .lpca_center_list[[i]]
     lpca_scale <- .lpca_scale_list[[i]]
     lpca_undo <- .lpca_undo_list[[i]]
+    no_tresp <- .no_tresp_list[[i]]
 
     swaprinc_result <- swaprinc(data, formula, engine, prc_eng, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
-                                scale., lpca_center, lpca_scale, lpca_undo, ...)
+                                scale., lpca_center, lpca_scale, lpca_undo,
+                                no_tresp, ...)
 
     if (!norun_raw) {
       all_models$model_raw <- swaprinc_result$model_raw

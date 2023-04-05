@@ -16,6 +16,7 @@ compswap(
   .lpca_center_list = list("none"),
   .lpca_scale_list = list("none"),
   .lpca_undo_list = list(FALSE),
+  .no_tresp_list = list(FALSE),
   ...
 )
 }
@@ -41,6 +42,8 @@ compswap(
 \item{.lpca_scale_list}{A list of lpca_scale values (see swaprinc documentation)}
 
 \item{.lpca_undo_list}{A list of lpca_undo values (see swaprinc documentation)}
+
+\item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
 
 \item{...}{Pass additional arguments to the swaprinc function}
 }
