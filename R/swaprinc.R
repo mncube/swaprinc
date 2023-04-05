@@ -145,6 +145,16 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   }
 
   # Get PCA data
+
+  #Split data based on prc_eng
+  split_stats_Gifi <- FALSE
+  if (sum(names(pca_vars) == c("stats", "Gifi")) == 2 |
+      sum(names(pca_vars) == c("Gifi", "stats")) == 2){
+    pca_stats_Gifi_vars <- pca_vars
+    pca_vars <- unlist(pca_vars, use.names = FALSE)
+    split_stats_Gifi <- TRUE
+  }
+
   pca_data <- data[, pca_vars]
 
   # Extraction helper functions
@@ -172,20 +182,24 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     pca_scores <- extract_Gifi()
   } else if (prc_eng == "stats_Gifi"){
 
+    # Split pca_data by
+    if (split_stats_Gifi){
+      pca_data_stats <- pca_data %>% dplyr::select(pca_stats_Gifi_vars[["stats"]])
+      pca_data_Gifi <- pca_data %>% dplyr::select(pca_stats_Gifi_vars[["Gifi"]])
+    } else {
+      pca_data_stats <- pca_data %>% dplyr::select(tidyselect::where(is.numeric))
+      pca_data_Gifi <- pca_data %>% dplyr::select(-tidyselect::where(is.numeric))
+    }
+
     #stats
-    pca_data_stats <- pca_data %>% dplyr::select(tidyselect::where(is.numeric))
     pca_scores_stats <- extract_stats(df = pca_data_stats,
                                       comps = n_pca_components[["stats"]])
-
     #Gifi
-    pca_data_Gifi <- pca_data %>% dplyr::select(-tidyselect::where(is.numeric))
     pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
                                     comps = n_pca_components[["Gifi"]])
-
     #Collapse
     pca_scores <- cbind(pca_scores_stats, pca_scores_Gifi)
     n_pca_components <- sum(n_pca_components)
-
   }else {
     rlang::abort("Must specify a valid per_engine.  Use 'stats' to call prcomp,
     or 'Gifi to call princals")
