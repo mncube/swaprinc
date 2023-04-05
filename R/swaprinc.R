@@ -29,6 +29,10 @@
 #' model fitting, and 'none' to skip lpca scaling.
 #' @param lpca_undo Undo centering and scaling of pca_vars as in the LearnPCA
 #' Step-by-Step PCA vignette.
+#' @param no_tresp When set to TRUE, no_tresp (No transform response) will exclude
+#' the response variable from from pre-modeling and pre-pca transformations.
+#' Specifically, setting no_tresp to TRUE will exclude the response variable from
+#' the transformation specified in lpca_center and lpca_scale.
 #' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
@@ -43,7 +47,7 @@
 swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_vars,
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
-                     lpca_undo = FALSE,...) {
+                     lpca_undo = FALSE, no_tresp = FALSE, ...) {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -71,11 +75,35 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     dplyr::bind_cols(df_nums, dplyr::select(df, -tidyselect::where(is.numeric)))
   }
 
+  # Helper function to get response for no_tresp
+  get_resp <- function(df){
+    df_resp <- dplyr::select(df, all.vars(stats::update(stats::as.formula(formula), . ~ 1)))
+    df_pred <- dplyr::select(df, -all.vars(stats::update(stats::as.formula(formula), . ~ 1)))
+    out <- list("df_resp" = df_resp,
+                "df_pred" = df_pred)
+  }
+
+  # Helper function to bind response variable to processed variables
+  bind_resp <- function(df_resp, df){
+    dplyr::bind_cols(df_resp, df)
+  }
+
   # Create helper function for lpca center and scale
   lpca_cs <- function(df, scl, cnt){
-    scale(get_nums(df), scale = scl, center = cnt) %>%
+  if (no_tresp == TRUE){
+    df <- get_resp(df)
+    df_resp <- df$df_resp
+    df <- df$df_pred
+  }
+    df <- scale(get_nums(df), scale = scl, center = cnt) %>%
       as.data.frame() %>%
       bind_nums(df)
+
+    if (no_tresp == TRUE){
+      df <- bind_resp(df_resp, df)
+    }
+
+    return(df)
   }
 
   # Helper function for model fitting

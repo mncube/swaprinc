@@ -230,7 +230,7 @@ test_that("swaprinc returns correct class for when lpca_center = 'all' &
 
   #Run basic lm model using stats
   res <- swaprinc(iris,
-                  "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
+                  formula = "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
                   pca_vars = c("Sepal.Width", "Petal.Length"),
                   n_pca_components = 2,
                   lpca_center = "all",
@@ -241,6 +241,26 @@ test_that("swaprinc returns correct class for when lpca_center = 'all' &
 
 
 })
+
+test_that("swaprinc returns correct class when lpca_center = 'all' &
+          lpca_scale = 'all' and no_tresp = TRUE", {
+            #Get iris data
+            data(iris)
+
+            #Run basic lm model using stats
+            res <- swaprinc(iris,
+                            formula = "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
+                            pca_vars = c("Sepal.Width", "Petal.Length"),
+                            n_pca_components = 2,
+                            lpca_center = "all",
+                            lpca_scale = "all",
+                            no_tresp = TRUE)
+
+            #See if swaprinc returned a list
+            expect_type(res, "list")
+
+
+          })
 
 
 test_that("swaprinc works with prc_eng set to Gifi", {

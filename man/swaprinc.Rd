@@ -17,6 +17,7 @@ swaprinc(
   lpca_center = "none",
   lpca_scale = "none",
   lpca_undo = FALSE,
+  no_tresp = FALSE,
   ...
 )
 }
@@ -59,6 +60,11 @@ model fitting, and 'none' to skip lpca scaling.}
 
 \item{lpca_undo}{Undo centering and scaling of pca_vars as in the LearnPCA
 Step-by-Step PCA vignette.}
+
+\item{no_tresp}{When set to TRUE, no_tresp (No transform response) will exclude
+the response variable from from pre-modeling and pre-pca transformations.
+Specifically, setting no_tresp to TRUE will exclude the response variable from
+the transformation specified in lpca_center and lpca_scale.}
 
 \item{...}{Pass additional arguments}
 }
