@@ -16,6 +16,9 @@ compswap(
   .lpca_center_list = list("none"),
   .lpca_scale_list = list("none"),
   .lpca_undo_list = list(FALSE),
+  .gifi_transform_list = list("none"),
+  .gifi_trans_vars_list = list(c(NULL)),
+  .gifi_trans_dims_list = list(NULL),
   .no_tresp_list = list(FALSE),
   ...
 )
@@ -42,6 +45,12 @@ compswap(
 \item{.lpca_scale_list}{A list of lpca_scale values (see swaprinc documentation)}
 
 \item{.lpca_undo_list}{A list of lpca_undo values (see swaprinc documentation)}
+
+\item{.gifi_transform_list}{A list of gifi_transform values (see swaprinc documentation)}
+
+\item{.gifi_trans_vars_list}{A list of gifi_trans_vars values (see swaprinc documentation)}
+
+\item{.gifi_trans_dims_list}{A list of gifi_trans_dims values (see swaprinc documentation)}
 
 \item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
 

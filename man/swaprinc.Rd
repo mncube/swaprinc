@@ -17,6 +17,9 @@ swaprinc(
   lpca_center = "none",
   lpca_scale = "none",
   lpca_undo = FALSE,
+  gifi_transform = "none",
+  gifi_trans_vars,
+  gifi_trans_dims,
   no_tresp = FALSE,
   ...
 )
@@ -60,6 +63,15 @@ model fitting, and 'none' to skip lpca scaling.}
 
 \item{lpca_undo}{Undo centering and scaling of pca_vars as in the LearnPCA
 Step-by-Step PCA vignette.}
+
+\item{gifi_transform}{Use Gifi optimal scaling to transform a set of variables.
+Parameter takes values 'none', 'all', 'raw', and 'pca'}
+
+\item{gifi_trans_vars}{A vector of variables to include in the Gifi optimal
+scaling transformation}
+
+\item{gifi_trans_dims}{Number of dimensions to extract in the Gifi optimal
+scaling transformation algorithm}
 
 \item{no_tresp}{When set to TRUE, no_tresp (No transform response) will exclude
 the response variable from from pre-modeling and pre-pca transformations.

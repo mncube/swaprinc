@@ -29,6 +29,12 @@
 #' model fitting, and 'none' to skip lpca scaling.
 #' @param lpca_undo Undo centering and scaling of pca_vars as in the LearnPCA
 #' Step-by-Step PCA vignette.
+#' @param gifi_transform Use Gifi optimal scaling to transform a set of variables.
+#' Parameter takes values 'none', 'all', 'raw', and 'pca'
+#' @param gifi_trans_vars A vector of variables to include in the Gifi optimal
+#' scaling transformation
+#' @param gifi_trans_dims Number of dimensions to extract in the Gifi optimal
+#' scaling transformation algorithm
 #' @param no_tresp When set to TRUE, no_tresp (No transform response) will exclude
 #' the response variable from from pre-modeling and pre-pca transformations.
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
@@ -47,7 +53,8 @@
 swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_vars,
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
-                     lpca_undo = FALSE, no_tresp = FALSE, ...) {
+                     lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
+                     gifi_trans_dims, no_tresp = FALSE, ...) {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -106,6 +113,24 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     return(df)
   }
 
+  # Create helper function to get os_trans vars
+  gifi_trans <- function(df, gifi_trans_dims, ...){
+    # Split data frame
+    dftr <- dplyr::select(df, tidyselect::all_of(gifi_trans_vars))
+    df_notr <- dplyr::select(df, -tidyselect::all_of(gifi_trans_vars))
+
+    # Get transformed data
+    gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims, ...)
+
+    # Combine transformed and non-transformed data
+    df_trans <- gifi_trans$transform %>%
+      as.data.frame() %>%
+      dplyr::mutate_all(as.numeric) %>%
+      cbind(df_notr)
+
+    return(df_trans)
+  }
+
   # Helper function for model fitting
   fit_model <- function(data, formula, engine, ...) {
     if (engine == "stats") {
@@ -137,6 +162,11 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     }
   }
 
+  # Transform All Data using Gifi::princals
+  if(gifi_transform == "all"){
+    data <- gifi_trans(data, gifi_trans_dims, ...)
+  }
+
   # Scale All Data and Raw Data According to LearnPCA
   if(lpca_center == "all"){
     data <- lpca_cs(data, scl = FALSE, cnt = TRUE)
@@ -148,22 +178,35 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Fit the regular model conditionally
   if (!norun_raw) {
+    # Copy data
+    df_raw <- data
+
+    # Gifi trans data
+    if(gifi_transform == "raw"){
+      df_raw <- gifi_trans(df_raw, gifi_trans_dims, ...)
+    }
 
     # Scale raw data only according to LearnPCA
     if(lpca_center == "raw"){
-      df <- lpca_cs(data, scl = FALSE, cnt = TRUE)
-    } else {df <- data}
+      df_raw <- lpca_cs(df_raw, scl = FALSE, cnt = TRUE)
+    }
 
     if(lpca_scale == "raw"){
-      df <- lpca_cs(df, scl = TRUE, cnt = FALSE)
-    } else {df <- df}
+      df_raw <- lpca_cs(df_raw, scl = TRUE, cnt = FALSE)
+    }
 
-    model_raw <- fit_model(df, formula, engine, ...)
+    model_raw <- fit_model(df_raw, formula, engine, ...)
   } else {
     model_raw <- NULL
   }
 
   # Perform PCA
+
+  # Gifi trans data
+  if(gifi_transform == "pca"){
+    data <- gifi_trans(data, gifi_trans_dims, ...)
+  }
+
   if(lpca_center == "pca"){
     data <- lpca_cs(data, scl = FALSE, cnt = TRUE)
   }

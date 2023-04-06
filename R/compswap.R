@@ -11,6 +11,9 @@
 #' @param .lpca_center_list A list of lpca_center values (see swaprinc documentation)
 #' @param .lpca_scale_list A list of lpca_scale values (see swaprinc documentation)
 #' @param .lpca_undo_list A list of lpca_undo values (see swaprinc documentation)
+#' @param .gifi_transform_list A list of gifi_transform values (see swaprinc documentation)
+#' @param .gifi_trans_vars_list A list of gifi_trans_vars values (see swaprinc documentation)
+#' @param .gifi_trans_dims_list A list of gifi_trans_dims values (see swaprinc documentation)
 #' @param .no_tresp_list A list of no_tresp values (see swaprinc documentation)
 #' @param ... Pass additional arguments to the swaprinc function
 #'
@@ -112,6 +115,9 @@ compswap <- function(data, formula,
                      .lpca_center_list = list("none"),
                      .lpca_scale_list = list("none"),
                      .lpca_undo_list = list(FALSE),
+                     .gifi_transform_list = list("none"),
+                     .gifi_trans_vars_list = list(c(NULL)),
+                     .gifi_trans_dims_list = list(NULL),
                      .no_tresp_list = list(FALSE),...) {
 
   n <- length(.pca_varlist)
@@ -127,6 +133,9 @@ compswap <- function(data, formula,
   .lpca_center_list <- rep(.lpca_center_list, length.out = n)
   .lpca_scale_list <- rep(.lpca_scale_list, length.out = n)
   .lpca_undo_list <- rep(.lpca_undo_list, length.out = n)
+  .gifi_transform_list <- rep(.gifi_transform_list, length.out = n)
+  .gifi_trans_vars_list <- rep(.gifi_trans_vars_list, length.out = n)
+  .gifi_trans_dims_list <- rep(.gifi_trans_dims_list, length.out = n)
   .no_tresp_list <- rep(.no_tresp_list, length.out = n)
 
   all_models <- list()
@@ -144,10 +153,14 @@ compswap <- function(data, formula,
     lpca_scale <- .lpca_scale_list[[i]]
     lpca_undo <- .lpca_undo_list[[i]]
     no_tresp <- .no_tresp_list[[i]]
+    gifi_transform <- .gifi_transform_list[[i]]
+    gifi_trans_vars <- .gifi_trans_vars_list[[i]]
+    gifi_trans_dims <- .gifi_trans_dims_list[[i]]
 
     swaprinc_result <- swaprinc(data, formula, engine, prc_eng, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
                                 scale., lpca_center, lpca_scale, lpca_undo,
+                                gifi_transform, gifi_trans_vars, gifi_trans_dims,
                                 no_tresp, ...)
 
     if (!norun_raw) {
