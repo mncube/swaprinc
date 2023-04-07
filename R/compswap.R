@@ -86,6 +86,7 @@ compswap <- function(data, formula,
   .gifi_trans_dims_list <- rep(.gifi_trans_dims_list, length.out = n)
   .no_tresp_list <- rep(.no_tresp_list, length.out = n)
 
+
   all_models <- list()
   all_comparisons <- data.frame()
 
@@ -104,6 +105,7 @@ compswap <- function(data, formula,
     gifi_transform <- .gifi_transform_list[[i]]
     gifi_trans_vars <- .gifi_trans_vars_list[[i]]
     gifi_trans_dims <- .gifi_trans_dims_list[[i]]
+
 
     swaprinc_result <- swaprinc(data, formula, engine, prc_eng, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
