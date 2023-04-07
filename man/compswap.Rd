@@ -20,6 +20,7 @@ compswap(
   .gifi_trans_vars_list = list(c(NULL)),
   .gifi_trans_dims_list = list(NULL),
   .no_tresp_list = list(FALSE),
+  .gifi_trans_options_list = list("noaddpars"),
   ...
 )
 }
@@ -53,6 +54,8 @@ compswap(
 \item{.gifi_trans_dims_list}{A list of gifi_trans_dims values (see swaprinc documentation)}
 
 \item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
+
+\item{.gifi_trans_options_list}{A list of gifi_trans_options (see swaprinc documentation)}
 
 \item{...}{Pass additional arguments to the swaprinc function}
 }

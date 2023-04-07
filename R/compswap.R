@@ -15,6 +15,7 @@
 #' @param .gifi_trans_vars_list A list of gifi_trans_vars values (see swaprinc documentation)
 #' @param .gifi_trans_dims_list A list of gifi_trans_dims values (see swaprinc documentation)
 #' @param .no_tresp_list A list of no_tresp values (see swaprinc documentation)
+#' @param .gifi_trans_options_list A list of gifi_trans_options (see swaprinc documentation)
 #' @param ... Pass additional arguments to the swaprinc function
 #'
 #' @return A list containing a list of fitted models and a comparison metrics
@@ -66,7 +67,8 @@ compswap <- function(data, formula,
                      .gifi_transform_list = list("none"),
                      .gifi_trans_vars_list = list(c(NULL)),
                      .gifi_trans_dims_list = list(NULL),
-                     .no_tresp_list = list(FALSE),...) {
+                     .no_tresp_list = list(FALSE),
+                     .gifi_trans_options_list = list("noaddpars"),...) {
 
   n <- length(.pca_varlist)
 
@@ -85,6 +87,7 @@ compswap <- function(data, formula,
   .gifi_trans_vars_list <- rep(.gifi_trans_vars_list, length.out = n)
   .gifi_trans_dims_list <- rep(.gifi_trans_dims_list, length.out = n)
   .no_tresp_list <- rep(.no_tresp_list, length.out = n)
+  .gifi_trans_options_list <- rep(.gifi_trans_options_list, length.out = n)
 
 
   all_models <- list()
@@ -105,13 +108,14 @@ compswap <- function(data, formula,
     gifi_transform <- .gifi_transform_list[[i]]
     gifi_trans_vars <- .gifi_trans_vars_list[[i]]
     gifi_trans_dims <- .gifi_trans_dims_list[[i]]
+    gifi_trans_options <- .gifi_trans_options_list[[i]]
 
 
     swaprinc_result <- swaprinc(data, formula, engine, prc_eng, pca_vars,
                                 n_pca_components, norun_raw = norun_raw, center,
                                 scale., lpca_center, lpca_scale, lpca_undo,
                                 gifi_transform, gifi_trans_vars, gifi_trans_dims,
-                                no_tresp, ...)
+                                no_tresp, gifi_trans_options, ...)
 
     if (!norun_raw) {
       all_models$model_raw <- swaprinc_result$model_raw

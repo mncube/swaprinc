@@ -41,7 +41,7 @@
 #' the transformation specified in lpca_center and lpca_scale.
 #' @param ... Pass additional arguments
 #' @param gifi_trans_options Pass additional arguments to Gifi::princals for
-#' gifi_transform
+#' gifi_transform.  Default is 'noaddpars' (no additional parameters)
 #'
 #' @return A list with fitted models
 #' @export
@@ -56,7 +56,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
-                     gifi_trans_dims, no_tresp = FALSE, ..., gifi_trans_options) {
+                     gifi_trans_dims, no_tresp = FALSE, gifi_trans_options = "noaddpars", ...) {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -122,7 +122,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     df_notr <- dplyr::select(df, -tidyselect::all_of(gifi_trans_vars))
 
     # Get transformed data
-    if(missing(gifi_trans_options)){
+    if(gifi_trans_options == "noaddpars"){
       gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims)
     } else{
       gifi_trans <- do.call(Gifi::princals, c(list(data = dftr, ndim = gifi_trans_dims), gifi_trans_options))
