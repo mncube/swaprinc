@@ -40,6 +40,8 @@
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
 #' the transformation specified in lpca_center and lpca_scale.
 #' @param ... Pass additional arguments
+#' @param gifi_trans_options Pass additional arguments to Gifi::princals for
+#' gifi_transform
 #'
 #' @return A list with fitted models
 #' @export
@@ -54,7 +56,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
-                     gifi_trans_dims, no_tresp = FALSE, ...) {
+                     gifi_trans_dims, no_tresp = FALSE, ..., gifi_trans_options) {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -114,13 +116,18 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   }
 
   # Create helper function to get os_trans vars
-  gifi_trans <- function(df, gifi_trans_dims, ...){
+  gifi_trans <- function(df, gifi_trans_dims, gifi_trans_options){
     # Split data frame
     dftr <- dplyr::select(df, tidyselect::all_of(gifi_trans_vars))
     df_notr <- dplyr::select(df, -tidyselect::all_of(gifi_trans_vars))
 
     # Get transformed data
-    gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims, ...)
+    if(missing(gifi_trans_options)){
+      gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims)
+    } else{
+      gifi_trans <- do.call(Gifi::princals, c(list(data = dftr, ndim = gifi_trans_dims), gifi_trans_options))
+    }
+
 
     # Combine transformed and non-transformed data
     df_trans <- gifi_trans$transform %>%
@@ -164,7 +171,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Transform All Data using Gifi::princals
   if(gifi_transform == "all"){
-    data <- gifi_trans(data, gifi_trans_dims, ...)
+    data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)
   }
 
   # Scale All Data and Raw Data According to LearnPCA
@@ -183,7 +190,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
     # Gifi trans data
     if(gifi_transform == "raw"){
-      df_raw <- gifi_trans(df_raw, gifi_trans_dims, ...)
+      df_raw <- gifi_trans(df_raw, gifi_trans_dims, gifi_trans_options)
     }
 
     # Scale raw data only according to LearnPCA
@@ -204,7 +211,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Gifi trans data
   if(gifi_transform == "pca"){
-    data <- gifi_trans(data, gifi_trans_dims, ...)
+    data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)
   }
 
   if(lpca_center == "pca"){

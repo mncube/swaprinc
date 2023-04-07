@@ -21,7 +21,8 @@ swaprinc(
   gifi_trans_vars,
   gifi_trans_dims,
   no_tresp = FALSE,
-  ...
+  ...,
+  gifi_trans_options
 )
 }
 \arguments{
@@ -79,6 +80,9 @@ Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
 
 \item{...}{Pass additional arguments}
+
+\item{gifi_trans_options}{Pass additional arguments to Gifi::princals for
+gifi_transform}
 }
 \value{
 A list with fitted models
