@@ -40,6 +40,9 @@
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
 #' the transformation specified in lpca_center and lpca_scale.
 #' @param ... Pass additional arguments
+#' @param gifi_princals_options Pass additional arguments to Gifi::princals for
+#' prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
+#' (no additional parameters)
 #' @param gifi_trans_options Pass additional arguments to Gifi::princals for
 #' gifi_transform.  Default is 'noaddpars' (no additional parameters)
 #'
@@ -56,7 +59,9 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      n_pca_components, norun_raw = FALSE, center = TRUE,
                      scale. = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
-                     gifi_trans_dims, no_tresp = FALSE, gifi_trans_options = "noaddpars", ...) {
+                     gifi_trans_dims, no_tresp = FALSE,
+                     gifi_princals_options = "noaddpars",
+                     gifi_trans_options = "noaddpars", ...) {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -248,8 +253,12 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     }
   }
 
-  extract_Gifi <- function(df = pca_data, comps = n_pca_components, ...){
-    gifi_results <- Gifi::princals(df, ndim=comps, ...)
+  extract_Gifi <- function(df = pca_data, comps = n_pca_components, gifi_princals_options){
+    if(gifi_princals_options == "noaddpars"){
+      gifi_results <- Gifi::princals(df, ndim=comps)
+    } else{
+      gifi_results <- do.call(Gifi::princals, c(list(data = df, ndim = comps), gifi_princals_options))
+    }
     pca_scores <- gifi_results$objectscores
   }
 
@@ -257,7 +266,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   if (prc_eng == "stats"){
     pca_scores <- extract_stats()
   } else if (prc_eng == "Gifi") {
-    pca_scores <- extract_Gifi()
+    pca_scores <- extract_Gifi(pca_data, n_pca_components, gifi_princals_options)
   } else if (prc_eng == "stats_Gifi"){
 
     # Split pca_data by
@@ -274,7 +283,8 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                                       comps = n_pca_components[["stats"]])
     #Gifi
     pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
-                                    comps = n_pca_components[["Gifi"]])
+                                    comps = n_pca_components[["Gifi"]],
+                                    gifi_princals_options)
     #Collapse
     pca_scores <- cbind(pca_scores_stats, pca_scores_Gifi)
     n_pca_components <- sum(n_pca_components)
