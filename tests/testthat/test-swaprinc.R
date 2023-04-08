@@ -27,7 +27,7 @@ test_that("swaprinc works with logistic regression using stats engine", {
                              engine = "stats",
                              pca_vars = c("Sepal.Length", "Petal.Width"),
                              n_pca_components = 2,
-                             family = binomial(link = "logit"))
+                             model_options = list(family = binomial(link = "logit")))
 
     # Check if swaprinc returned a list
     expect_type(res_logistic, "list")

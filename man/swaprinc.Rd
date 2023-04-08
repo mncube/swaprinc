@@ -19,10 +19,10 @@ swaprinc(
   gifi_trans_vars,
   gifi_trans_dims,
   no_tresp = FALSE,
+  model_options = "noaddpars",
   prcomp_options = "noaddpars",
   gifi_princals_options = "noaddpars",
-  gifi_trans_options = "noaddpars",
-  ...
+  gifi_trans_options = "noaddpars"
 )
 }
 \arguments{
@@ -75,6 +75,10 @@ the response variable from from pre-modeling and pre-pca transformations.
 Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
 
+\item{model_options}{Pass additional arguments to statistical modeling functions
+(i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
+(no additional parameters)}
+
 \item{prcomp_options}{Pass additional arguments to stats::prcomp for
 prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 (no additional parameters)}
@@ -85,8 +89,6 @@ prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 
 \item{gifi_trans_options}{Pass additional arguments to Gifi::princals for
 gifi_transform.  Default is 'noaddpars' (no additional parameters)}
-
-\item{...}{Pass additional arguments}
 }
 \value{
 A list with fitted models

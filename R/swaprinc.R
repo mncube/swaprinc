@@ -37,6 +37,9 @@
 #' the response variable from from pre-modeling and pre-pca transformations.
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
 #' the transformation specified in lpca_center and lpca_scale.
+#' @param model_options Pass additional arguments to statistical modeling functions
+#' (i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
+#' (no additional parameters)
 #' @param prcomp_options Pass additional arguments to stats::prcomp for
 #' prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 #' (no additional parameters)
@@ -45,7 +48,6 @@
 #' (no additional parameters)
 #' @param gifi_trans_options Pass additional arguments to Gifi::princals for
 #' gifi_transform.  Default is 'noaddpars' (no additional parameters)
-#' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
 #' @export
@@ -60,9 +62,10 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      n_pca_components, norun_raw = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
                      gifi_trans_dims, no_tresp = FALSE,
+                     model_options = "noaddpars",
                      prcomp_options = "noaddpars",
                      gifi_princals_options = "noaddpars",
-                     gifi_trans_options = "noaddpars", ...) {
+                     gifi_trans_options = "noaddpars") {
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
@@ -145,13 +148,23 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   }
 
   # Helper function for model fitting
-  fit_model <- function(data, formula, engine, ...) {
+  fit_model <- function(data, formula, engine, model_options) {
     if (engine == "stats") {
-      glm_model <- try(stats::glm(formula, data, ...), silent = TRUE)
+      if(model_options == "noaddpars"){
+        glm_model <- try(stats::glm(formula, data), silent = TRUE)
+      } else{
+        glm_model <- try(do.call(stats::glm, c(list(formula = formula, data = data),
+                                            model_options)), silent = TRUE)
+      }
       if (inherits(glm_model, "glm")) {
         return(glm_model)
       } else {
-        lm_model <- try(stats::lm(formula, data, ...), silent = TRUE)
+        if(model_options == "noaddpars"){
+          lm_model <- try(stats::lm(formula, data), silent = TRUE)
+        } else{
+          lm_model <- try(do.call(stats::lm, c(list(formula = formula, data = data),
+                                                 model_options)), silent = TRUE)
+        }
         if (inherits(lm_model, "lm")) {
           return(lm_model)
         } else {
@@ -159,11 +172,21 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
         }
       }
     } else if (engine == "lme4") {
-      lmer_model <- try(lme4::lmer(formula, data, ...), silent = TRUE)
+      if(model_options == "noaddpars"){
+        lmer_model <- try(lme4::lmer(formula, data), silent = TRUE)
+      } else{
+        lmer_model <- try(do.call(lme4::lmer, c(list(formula = formula, data = data),
+                                             model_options)), silent = TRUE)
+      }
       if (inherits(lmer_model, "merMod")) {
         return(lmer_model)
       } else {
-        glmer_model <- try(lme4::glmer(formula, data, ...), silent = TRUE)
+        if(model_options == "noaddpars"){
+          glmer_model <- try(lme4::glmer(formula, data), silent = TRUE)
+        } else{
+          glmer_model <- try(do.call(lme4::glmer, c(list(formula = formula, data = data),
+                                                  model_options)), silent = TRUE)
+        }
         if (inherits(glmer_model, "merMod")) {
           return(glmer_model)
         } else {
@@ -208,7 +231,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
       df_raw <- lpca_cs(df_raw, scl = TRUE, cnt = FALSE)
     }
 
-    model_raw <- fit_model(df_raw, formula, engine, ...)
+    model_raw <- fit_model(df_raw, formula, engine, model_options)
   } else {
     model_raw <- NULL
   }
@@ -357,7 +380,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   formula_pca <- replace_pca_vars_in_formula(formula, pca_vars, pca_terms)
 
   # Fit the PCA model
-  model_pca <- fit_model(data_pca, formula_pca, engine, ...)
+  model_pca <- fit_model(data_pca, formula_pca, engine, model_options)
 
   #Compare Models
   compare_models <- function(model_raw, model_pca) {

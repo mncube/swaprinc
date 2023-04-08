@@ -18,10 +18,10 @@ compswap(
   .gifi_trans_vars_list = list(c(NULL)),
   .gifi_trans_dims_list = list(NULL),
   .no_tresp_list = list(FALSE),
+  .model_options_list = list("noaddpars"),
   .prcomp_options_list = list("noaddpars"),
   .gifi_princals_options_list = list("noaddpars"),
-  .gifi_trans_options_list = list("noaddpars"),
-  ...
+  .gifi_trans_options_list = list("noaddpars")
 )
 }
 \arguments{
@@ -51,13 +51,13 @@ compswap(
 
 \item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
 
+\item{.model_options_list}{A list of model_options (see swaprinc documentation)}
+
 \item{.prcomp_options_list}{A list of prcomp_options (see swaprinc documentation)}
 
 \item{.gifi_princals_options_list}{A list of gifi_princals_options (see swaprinc documentation)}
 
 \item{.gifi_trans_options_list}{A list of gifi_trans_options (see swaprinc documentation)}
-
-\item{...}{Pass additional arguments to the swaprinc function}
 }
 \value{
 A list containing a list of fitted models and a comparison metrics
