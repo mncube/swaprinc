@@ -15,8 +15,6 @@
 #' model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
 #' vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).
 #' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
-#' @param center Set center parameter for prcomp
-#' @param scale. Set scale. parameter for prcomp
 #' @param lpca_center Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
 #' numeric variables will be included in the centering.  Parameter takes values
 #' 'all' to center raw and pca variables, 'raw' to only center variables for the
@@ -39,12 +37,15 @@
 #' the response variable from from pre-modeling and pre-pca transformations.
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
 #' the transformation specified in lpca_center and lpca_scale.
-#' @param ... Pass additional arguments
+#' @param prcomp_options Pass additional arguments to stats::prcomp for
+#' prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
+#' (no additional parameters)
 #' @param gifi_princals_options Pass additional arguments to Gifi::princals for
 #' prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 #' (no additional parameters)
 #' @param gifi_trans_options Pass additional arguments to Gifi::princals for
 #' gifi_transform.  Default is 'noaddpars' (no additional parameters)
+#' @param ... Pass additional arguments
 #'
 #' @return A list with fitted models
 #' @export
@@ -56,10 +57,10 @@
 #' pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 #' n_pca_components = 2)
 swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_vars,
-                     n_pca_components, norun_raw = FALSE, center = TRUE,
-                     scale. = FALSE, lpca_center = "none", lpca_scale = "none",
+                     n_pca_components, norun_raw = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
                      gifi_trans_dims, no_tresp = FALSE,
+                     prcomp_options = "noaddpars",
                      gifi_princals_options = "noaddpars",
                      gifi_trans_options = "noaddpars", ...) {
   # Test function parameters
@@ -241,8 +242,13 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   pca_data <- data[, pca_vars]
 
   # Extraction helper functions
-  extract_stats <- function(df = pca_data, comps = n_pca_components, ...){
-    pca_result <- stats::prcomp(df, center = center, scale. = scale., ...)
+  extract_stats <- function(df = pca_data, comps = n_pca_components, prcomp_options){
+    if(prcomp_options == "noaddpars"){
+      pca_result <- stats::prcomp(df)
+    } else{
+      pca_result <- do.call(stats::prcomp, c(list(x = df), prcomp_options))
+    }
+
 
     if (lpca_undo == TRUE) {
       Xhat <- pca_result$x[, 1:comps] %*% t(pca_result$rotation[, 1:comps])
@@ -264,7 +270,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Run prc_eng
   if (prc_eng == "stats"){
-    pca_scores <- extract_stats()
+    pca_scores <- extract_stats(pca_data, n_pca_components, prcomp_options)
   } else if (prc_eng == "Gifi") {
     pca_scores <- extract_Gifi(pca_data, n_pca_components, gifi_princals_options)
   } else if (prc_eng == "stats_Gifi"){
@@ -280,7 +286,8 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
     #stats
     pca_scores_stats <- extract_stats(df = pca_data_stats,
-                                      comps = n_pca_components[["stats"]])
+                                      comps = n_pca_components[["stats"]],
+                                      prcomp_options)
     #Gifi
     pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
                                     comps = n_pca_components[["Gifi"]],

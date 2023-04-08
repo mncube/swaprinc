@@ -12,8 +12,6 @@ swaprinc(
   pca_vars,
   n_pca_components,
   norun_raw = FALSE,
-  center = TRUE,
-  scale. = FALSE,
   lpca_center = "none",
   lpca_scale = "none",
   lpca_undo = FALSE,
@@ -21,6 +19,7 @@ swaprinc(
   gifi_trans_vars,
   gifi_trans_dims,
   no_tresp = FALSE,
+  prcomp_options = "noaddpars",
   gifi_princals_options = "noaddpars",
   gifi_trans_options = "noaddpars",
   ...
@@ -46,10 +45,6 @@ model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
 vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).}
 
 \item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
-
-\item{center}{Set center parameter for prcomp}
-
-\item{scale.}{Set scale. parameter for prcomp}
 
 \item{lpca_center}{Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
 numeric variables will be included in the centering.  Parameter takes values
@@ -79,6 +74,10 @@ scaling transformation algorithm}
 the response variable from from pre-modeling and pre-pca transformations.
 Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
+
+\item{prcomp_options}{Pass additional arguments to stats::prcomp for
+prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
+(no additional parameters)}
 
 \item{gifi_princals_options}{Pass additional arguments to Gifi::princals for
 prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'

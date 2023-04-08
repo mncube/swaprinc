@@ -11,8 +11,6 @@ compswap(
   .prc_eng_list = list("stats"),
   .pca_varlist,
   .n_pca_list,
-  .center_list = list(TRUE),
-  .scale._list = list(FALSE),
   .lpca_center_list = list("none"),
   .lpca_scale_list = list("none"),
   .lpca_undo_list = list(FALSE),
@@ -20,6 +18,7 @@ compswap(
   .gifi_trans_vars_list = list(c(NULL)),
   .gifi_trans_dims_list = list(NULL),
   .no_tresp_list = list(FALSE),
+  .prcomp_options_list = list("noaddpars"),
   .gifi_princals_options_list = list("noaddpars"),
   .gifi_trans_options_list = list("noaddpars"),
   ...
@@ -38,10 +37,6 @@ compswap(
 
 \item{.n_pca_list}{A list of n_pca_components (see swaprinc documentation)}
 
-\item{.center_list}{A list of center values (see swaprinc documentation)}
-
-\item{.scale._list}{A list of scale values (see swaprinc documentation)}
-
 \item{.lpca_center_list}{A list of lpca_center values (see swaprinc documentation)}
 
 \item{.lpca_scale_list}{A list of lpca_scale values (see swaprinc documentation)}
@@ -55,6 +50,8 @@ compswap(
 \item{.gifi_trans_dims_list}{A list of gifi_trans_dims values (see swaprinc documentation)}
 
 \item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
+
+\item{.prcomp_options_list}{A list of prcomp_options (see swaprinc documentation)}
 
 \item{.gifi_princals_options_list}{A list of gifi_princals_options (see swaprinc documentation)}
 
@@ -84,8 +81,6 @@ pca_varlist <- list(c("Sepal.Width", "Petal.Length"),
 n_pca_list <- list(2, 2)
 
 # Set scaling values
-center_list <- list(TRUE, TRUE)
-scale._list <- list(FALSE, FALSE)
 lpca_center_list <- list("none", "none")
 lpca_scale_list <- list("none", "none")
 lpca_undo_list <- list(FALSE, FALSE)
@@ -96,8 +91,6 @@ compswap_results <- compswap(data = iris,
                             engine = "stats",
                             .pca_varlist = pca_varlist,
                             .n_pca_list = n_pca_list,
-                            .center_list = center_list,
-                            .scale._list = scale._list,
                             .lpca_center_list = lpca_center_list,
                             .lpca_scale_list = lpca_scale_list,
                             .lpca_undo_list = lpca_undo_list)

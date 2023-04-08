@@ -15,8 +15,6 @@ test_that("compswap works correctly with for lm", {
   n_pca_list <- list(2, 2)
 
   # Set scaling values
-  center_list <- list(TRUE, TRUE)
-  scale._list <- list(FALSE, FALSE)
   lpca_center_list <- list("none", "none")
   lpca_scale_list <- list("none", "none")
   lpca_undo_list <- list(FALSE, FALSE)
@@ -27,8 +25,6 @@ test_that("compswap works correctly with for lm", {
                                engine = "stats",
                                .pca_varlist = pca_varlist,
                                .n_pca_list = n_pca_list,
-                               .center_list = center_list,
-                               .scale._list = scale._list,
                                .lpca_center_list = lpca_center_list,
                                .lpca_scale_list = lpca_scale_list,
                                .lpca_undo_list = lpca_undo_list)
