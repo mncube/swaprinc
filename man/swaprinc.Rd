@@ -19,6 +19,7 @@ swaprinc(
   gifi_trans_vars,
   gifi_trans_dims,
   no_tresp = FALSE,
+  miss_handler = "none",
   model_options = "noaddpars",
   prcomp_options = "noaddpars",
   gifi_princals_options = "noaddpars",
@@ -74,6 +75,9 @@ scaling transformation algorithm}
 the response variable from from pre-modeling and pre-pca transformations.
 Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
+
+\item{miss_handler}{Choose how swaprinc handles missing data on the input
+data.  Default is 'none'.  Use 'omit' for complete case analysis.}
 
 \item{model_options}{Pass additional arguments to statistical modeling functions
 (i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'

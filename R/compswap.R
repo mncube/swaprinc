@@ -13,6 +13,7 @@
 #' @param .gifi_trans_vars_list A list of gifi_trans_vars values (see swaprinc documentation)
 #' @param .gifi_trans_dims_list A list of gifi_trans_dims values (see swaprinc documentation)
 #' @param .no_tresp_list A list of no_tresp values (see swaprinc documentation)
+#' @param .miss_handler_list A list of miss_handler values (see swaprinc documentation)
 #' @param .model_options_list A list of model_options (see swaprinc documentation)
 #' @param .prcomp_options_list A list of prcomp_options (see swaprinc documentation)
 #' @param .gifi_princals_options_list A list of gifi_princals_options (see swaprinc documentation)
@@ -62,6 +63,7 @@ compswap <- function(data, formula,
                      .gifi_trans_vars_list = list(c(NULL)),
                      .gifi_trans_dims_list = list(NULL),
                      .no_tresp_list = list(FALSE),
+                     .miss_handler_list = list("none"),
                      .model_options_list = list("noaddpars"),
                      .prcomp_options_list = list("noaddpars"),
                      .gifi_princals_options_list = list("noaddpars"),
@@ -82,6 +84,7 @@ compswap <- function(data, formula,
   .gifi_trans_vars_list <- rep(.gifi_trans_vars_list, length.out = n)
   .gifi_trans_dims_list <- rep(.gifi_trans_dims_list, length.out = n)
   .no_tresp_list <- rep(.no_tresp_list, length.out = n)
+  .miss_handler_list <- rep(.miss_handler_list, length.out = n)
   .model_options_list <- rep(.model_options_list, length.out = n)
   .prcomp_options_list <- rep(.prcomp_options_list, length.out = n)
   .gifi_princals_options_list <- rep(.gifi_princals_options_list, length.out = n)
@@ -102,6 +105,7 @@ compswap <- function(data, formula,
     lpca_scale <- .lpca_scale_list[[i]]
     lpca_undo <- .lpca_undo_list[[i]]
     no_tresp <- .no_tresp_list[[i]]
+    miss_handler <- .miss_handler_list[[i]]
     gifi_transform <- .gifi_transform_list[[i]]
     gifi_trans_vars <- .gifi_trans_vars_list[[i]]
     gifi_trans_dims <- .gifi_trans_dims_list[[i]]
@@ -114,8 +118,9 @@ compswap <- function(data, formula,
                                 n_pca_components, norun_raw = norun_raw,
                                 lpca_center, lpca_scale, lpca_undo,
                                 gifi_transform, gifi_trans_vars, gifi_trans_dims,
-                                no_tresp, model_options, prcomp_options,
-                                gifi_princals_options, gifi_trans_options)
+                                no_tresp, miss_handler, model_options,
+                                prcomp_options, gifi_princals_options,
+                                gifi_trans_options)
 
     if (!norun_raw) {
       all_models$model_raw <- swaprinc_result$model_raw

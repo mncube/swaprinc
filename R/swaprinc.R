@@ -37,6 +37,8 @@
 #' the response variable from from pre-modeling and pre-pca transformations.
 #' Specifically, setting no_tresp to TRUE will exclude the response variable from
 #' the transformation specified in lpca_center and lpca_scale.
+#' @param miss_handler Choose how swaprinc handles missing data on the input
+#' data.  Default is 'none'.  Use 'omit' for complete case analysis.
 #' @param model_options Pass additional arguments to statistical modeling functions
 #' (i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
 #' (no additional parameters)
@@ -61,11 +63,15 @@
 swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_vars,
                      n_pca_components, norun_raw = FALSE, lpca_center = "none", lpca_scale = "none",
                      lpca_undo = FALSE, gifi_transform = "none", gifi_trans_vars,
-                     gifi_trans_dims, no_tresp = FALSE,
+                     gifi_trans_dims, no_tresp = FALSE, miss_handler = "none",
                      model_options = "noaddpars",
                      prcomp_options = "noaddpars",
                      gifi_princals_options = "noaddpars",
                      gifi_trans_options = "noaddpars") {
+  # Missing data handler
+  if (miss_handler == "omit"){
+    data <- data[stats::complete.cases(data), ]
+  }
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){

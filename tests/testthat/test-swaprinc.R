@@ -484,3 +484,23 @@ test_that("swaprinc works with prc_eng set to Gifi and extra parameters passed
   # Chec that swaprinc has correct dimensions
   expect_equal(length(swaprinc_result), 3)
 })
+
+test_that("swaprinc works with miss_handler set to omit", {
+  #Get iris data
+  data(iris)
+
+  iris <- iris %>%
+    dplyr::mutate(Petal.Length = ifelse(Petal.Length >= 6.0, NA, Petal.Length))
+
+  #Run basic lm model using stats
+  res <- swaprinc(data = iris,
+                  formula = "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
+                  pca_vars = c("Sepal.Width", "Petal.Length"),
+                  n_pca_components = 2,
+                  miss_handler = "omit")
+
+  #See if swaprinc returned a list
+  expect_type(res, "list")
+
+
+})

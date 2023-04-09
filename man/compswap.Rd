@@ -18,6 +18,7 @@ compswap(
   .gifi_trans_vars_list = list(c(NULL)),
   .gifi_trans_dims_list = list(NULL),
   .no_tresp_list = list(FALSE),
+  .miss_handler_list = list("none"),
   .model_options_list = list("noaddpars"),
   .prcomp_options_list = list("noaddpars"),
   .gifi_princals_options_list = list("noaddpars"),
@@ -50,6 +51,8 @@ compswap(
 \item{.gifi_trans_dims_list}{A list of gifi_trans_dims values (see swaprinc documentation)}
 
 \item{.no_tresp_list}{A list of no_tresp values (see swaprinc documentation)}
+
+\item{.miss_handler_list}{A list of miss_handler values (see swaprinc documentation)}
 
 \item{.model_options_list}{A list of model_options (see swaprinc documentation)}
 
