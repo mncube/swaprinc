@@ -72,6 +72,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   if (miss_handler == "omit"){
     data <- data[stats::complete.cases(data), ]
   }
+
   # Test function parameters
   if (!(lpca_center == "none" | lpca_center == "all" | lpca_center == "raw" |
         lpca_center == "pca")){
