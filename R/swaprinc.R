@@ -90,6 +90,25 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                  to 'all' or 'pca'")
   }
 
+  # Helper function to extract interaction variables
+  extract_interaction_vars <- function(formula) {
+    term_obj <- stats::terms(stats::as.formula(formula))
+    term_matrix <- attr(term_obj, "factors")
+    index <- term_matrix[grepl(':', colnames(term_matrix))]
+
+    # Find variables involved in interactions
+    interaction_vars <- rownames(term_matrix)[index == 1]
+
+    return(interaction_vars)
+  }
+
+  # Inside your swaprinc function
+  interaction_vars <- extract_interaction_vars(formula)
+
+  if (any(interaction_vars %in% pca_vars)) {
+    rlang::abort("swaprinc does not have support for including interaction variables in pca_vars")
+  }
+
   # Helper function to get numerics
   get_nums <- function(df){
     dplyr::select(df, tidyselect::where(is.numeric))

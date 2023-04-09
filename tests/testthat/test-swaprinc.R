@@ -504,3 +504,45 @@ test_that("swaprinc works with miss_handler set to omit", {
 
 
 })
+
+
+test_that("swaprinc works with interactions if the interaction variables are not
+          part of the pca_vars vector", {
+  suppressWarnings({
+    # Get iris data
+    data(iris)
+    iris$Species_binary <- ifelse(iris$Species == "setosa", 1, 0)
+
+    # Run logistic regression model using stats engine
+    res_logistic <- swaprinc(data = iris,
+                             formula = "Species_binary ~ Sepal.Length + Sepal.Width*Petal.Length + Petal.Width",
+                             engine = "stats",
+                             pca_vars = c("Sepal.Length", "Petal.Width"),
+                             n_pca_components = 2,
+                             model_options = list(family = binomial(link = "logit")))
+
+    # Check if swaprinc returned a list
+    expect_type(res_logistic, "list")
+
+    # Check if both models in the list are of class "glm"
+    expect_s3_class(res_logistic$model_raw, "glm")
+    expect_s3_class(res_logistic$model_pca, "glm")
+  })
+})
+
+test_that("swaprinc throws error if the interaction variables are part of the
+          pca_vars vector", {
+              # Get iris data
+              data(iris)
+              iris$Species_binary <- ifelse(iris$Species == "setosa", 1, 0)
+
+              # Check if swaprinc returns error
+              expect_error(swaprinc(data = iris,
+                                    formula = "Species_binary ~ Sepal.Length + Sepal.Width + Petal.Length*Petal.Width",
+                                    engine = "stats",
+                                    pca_vars = c("Sepal.Length", "Petal.Width"),
+                                    n_pca_components = 2,
+                                    model_options = list(family = binomial(link = "logit"))),
+                           "swaprinc does not have support for including interaction variables in pca_vars")
+
+          })
