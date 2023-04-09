@@ -428,7 +428,8 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     # Create comparison metrics data frame
     if(is.null(model_raw) & inherits(model_pca, c("glm", "glmerMod"))) {
       # For glm and glmer models
-      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / pca_summary$null.deviance)
+      null_log_likelihood <- -0.5 * pca_summary$null.deviance
+      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / null_log_likelihood)
 
       comparison <- data.frame(
         model = c("PCA"),
@@ -438,8 +439,10 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
       )
     } else if (inherits(model_raw, c("glm", "glmerMod")) & inherits(model_pca, c("glm", "glmerMod"))) {
       # For glm and glmer models
-      raw_mcfadden_pseudo_r_squared <- 1 - (raw_summary$logLik / raw_summary$null.deviance)
-      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / pca_summary$null.deviance)
+      null_log_likelihood_raw <- -0.5 * raw_summary$null.deviance
+      raw_mcfadden_pseudo_r_squared <- 1 - (raw_summary$logLik / null_log_likelihood_raw)
+      null_log_likelihood_pca <- -0.5 * pca_summary$null.deviance
+      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / null_log_likelihood_pca)
 
       comparison <- data.frame(
         model = c("Raw", "PCA"),
