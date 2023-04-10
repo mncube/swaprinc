@@ -89,3 +89,67 @@ library(swaprinc)
   print(swaprinc_result$comparison)
 
 ```
+
+
+## The Motivating Example
+
+A chronic difficulty in applied statistics and data science is logistic regression
+with a set of categorical independent variables.  In this motivating example,
+swaprinc will be used to compare a 'raw' logistic regression model with 
+five categorical independent variables to a 'pca' logistic regression model where 
+Gifi::princals will be used to swap out six of the independent variables for 
+the first three principal components.  
+
+```{r motivation}
+ # Create a small simulated dataset
+  set.seed(42)
+  n <- 50
+  x1 <- rnorm(n, 0.5, 4)
+  x2 <- rnorm(n, 3, 15)
+  x3 <- rnorm(n, -2.5, 5)
+  x4 <- -2.5*x2 + 3*x3 + rnorm(n, 0, 4)
+  x5 <- x2*x3 + rnorm(n, -5, 5)*rnorm(n, 5, 10)
+  x6 <- rnorm(n, -2, 4)*rnorm(n, 3, 5)
+  x7 <- x4 + x6 + rnorm(n, 0, 3)
+  y <- 1 + 2*x1 + 3*x2 + -2*x3 + .5*x4 + x5 + 1.5*x6 + x7 + rnorm(n)
+  data <- data.frame(y, x1, x2, x3, x4, x5, x6, x7)
+
+  # Categorize the variables
+  yq <- stats::quantile(data$y,c(0,1/2, 1))
+  x1q <- stats::quantile(data$x1,c(0,1/2, 1))
+  x2q <- stats::quantile(data$x2,c(0,1/4,3/4,1))
+  x3q <- stats::quantile(data$x3,c(0,2/5,3/5,1))
+  x4q <- stats::quantile(data$x4,c(0,1/5,4/5,1))
+  x5q <- stats::quantile(data$x5,c(0,2/5,3/5,1))
+  x6q <- stats::quantile(data$x6,c(0,2/5,4/5,1))
+  x7q <- stats::quantile(data$x7,c(0,2/5,3/5,1))
+
+
+  data <- data %>% dplyr::mutate(
+    y = cut(y, breaks=yq, labels=c("0", "1"),include.lowest = TRUE),
+    x1 = cut(x1, breaks=x1q, labels=c("control", "treatment"),include.lowest = TRUE),
+    x2 = cut(x2, breaks=x2q, labels=c("small","medium","large"),include.lowest = TRUE),
+    x3 = cut(x3, breaks=x3q, labels=c("short","average","tall"),include.lowest = TRUE),
+    x4 = cut(x4, breaks=x4q, labels=c("lowbit","most","highbit"),include.lowest = TRUE),
+    x5 = cut(x5, breaks=x5q, labels=c("under","healthy","over"),include.lowest = TRUE),
+    x6 = cut(x6, breaks=x6q, labels=c("small","medium","large"),include.lowest = TRUE),
+    x7 = cut(x7, breaks=x7q, labels=c("small","medium","large"),include.lowest = TRUE)) %>%
+    dplyr::mutate(y = as.numeric(ifelse(y == "0", 0, 1)))
+
+  # Run swaprinc with prc_eng set to Gifi
+  swaprinc_result <- swaprinc(data,
+                              formula = "y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7",
+                              pca_vars = c("x2", "x3", "x4", "x5", "x6", "x7"),
+                              n_pca_components = 3,
+                              prc_eng = "Gifi",
+                              model_options = list(family = binomial(link = "logit")))
+  
+  # Summarize raw model
+  summary(swaprinc_result$model_raw)
+  
+  # Summarize pca model
+  summary(swaprinc_result$model_pca)
+  
+  # Get model comparisons
+  print(swaprinc_result$comparison)
+```
