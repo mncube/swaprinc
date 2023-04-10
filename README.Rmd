@@ -34,15 +34,15 @@ devtools::install_github("mncube/swaprinc")
 ## A Simple Example
 
 In the example below, a regression model is used to estimate the relation between
-x1 and y after controlling for x2 - x5.  
+x1 and y after controlling for x2 - x10.  
 
 Using the default engine of "stats" specifies that stats::lm will be used to fit 
 the statistical model and using the default prc_eng of "stats" specifies that stats::prcomp will be used to extract principal components.  
 
 The formula parameter specifies the "raw model" which will be passed to stats::lm.
-The pca_vars and n_pca_components parameters specify that raw variables x2 - x5
-will be used to extract 2 principal components, and then the following "pca model"
-will be passed to stats::lm: y ~ x1 + PC1 + PC2
+The pca_vars and n_pca_components parameters specify that raw variables x2 - x10
+will be used to extract 3 principal components, and then the following "pca model"
+will be passed to stats::lm: y ~ x1 + PC1 + PC2 + PC3
 
 ```{r simple}
 library(swaprinc)
@@ -53,16 +53,21 @@ library(swaprinc)
   x1 <- rnorm(n)
   x2 <- rnorm(n, 5, 15)
   x3 <- rnorm(n, -5.5, 20)
-  x4 <- rnorm(n, 3, 3)
-  x5 <- rnorm(n, -2, 4)
-  y <- 1 + 2 * x1 + 3 * x2 + 2.5*x4 - 3.5*x5 + rnorm(n)
-  data <- data.frame(y, x1, x2, x3, x4, x5)
+  x4 <- rnorm(n, 3, 3) + x3*1.5
+  x5 <- rnorm(n, -2, 4) + x3*.25
+  x6 <- rnorm(n, -5, 5) + x4
+  x7 <- rnorm(n, -2, 6)
+  x8 <- rnorm(n, 2, 7)
+  x9 <- rnorm(n, -2, 3) +x2*.4
+  x10 <- rnorm(n, 5, 4)
+  y <- 1 + 2 * x1 + 3 * x2 + 2.5*x4 - 3.5*x5 + 2*x6 + 1.5*x7 + x8 + 2*x9 + x10 + rnorm(n)
+  data <- data.frame(y, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10)
 
   # Run swaprinc with
   swaprinc_result <- swaprinc(data,
-                              formula = "y ~ x1 + x2 + x3 + x4 + x5",
-                              pca_vars = c("x2", "x3", "x4", "x5"),
-                              n_pca_components = 2)
+                              formula = "y ~ x1 + x2 + x3 + x4 + x5 + x5 + x6 + x7 + x8 + x9 + x10",
+                              pca_vars = c("x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10"),
+                              n_pca_components = 3)
   
   # Summarize raw model
   summary(swaprinc_result$model_raw)
