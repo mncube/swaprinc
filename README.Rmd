@@ -34,22 +34,22 @@ devtools::install_github("mncube/swaprinc")
 ## A Simple Example
 
 In the example below, a regression model is used to estimate the relation between
-x1 and y after controlling for x2 - x10.  
+x1 and y after controlling for x2 through x10.  
 
 Using the default engine of "stats" specifies that stats::lm will be used to fit 
 the statistical model and using the default prc_eng of "stats" specifies that 
 stats::prcomp will be used to extract principal components.  
 
 The formula parameter specifies the "raw model" which will be passed to stats::lm.
-The pca_vars and n_pca_components parameters specify that raw variables x2 - x10
-will be used to extract 3 principal components, and then the following "pca model"
-will be passed to stats::lm: y ~ x1 + PC1 + PC2 + PC3
+The pca_vars and n_pca_components parameters specify that raw variables 
+x2 through x10 will be used to extract 3 principal components, and then the 
+following "pca model" will be passed to stats::lm: y ~ x1 + PC1 + PC2 + PC3
 
 Setting the parameters lpca_center and lpca_scale to 'pca' specifies that before
-passing the data in pca_vars to stats::prcomp, centering and scaling should be 
+passing the data in pca_vars to stats::prcomp, centering and scaling will be 
 executed as outlined in the LearnPCA Step-by-Step PCA vignette: (https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf).
 Setting the miss_handler parameter to 'omit' specifies that the rows of the data 
-frame passed to swaprinc should be subset with stats::complete.cases.
+frame passed to swaprinc will be subset with stats::complete.cases.
 
 ```{r simple}
 library(swaprinc)
