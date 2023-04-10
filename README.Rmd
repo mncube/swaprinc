@@ -172,9 +172,6 @@ variables.
                               .prc_eng_list = list("Gifi"),
                               .model_options_list = list(list(family = binomial(link = "logit"))))
 
-  # Return list of models
-  summary(compswap_results$all_models)
-  
   # Summarize raw model
   summary(compswap_results$all_models$model_raw)
   
@@ -184,3 +181,4 @@ variables.
   # Get model comparisons
   print(compswap_results$all_comparisons)
 ```
+
