@@ -54,8 +54,8 @@
 compswap <- function(data, formula,
                      engine = "stats",
                      .prc_eng_list = list("stats"),
-                     .pca_varlist,
-                     .n_pca_list,
+                     .pca_varlist = list(c(NULL)),
+                     .n_pca_list = list(NULL),
                      .lpca_center_list = list("none"),
                      .lpca_scale_list = list("none"),
                      .lpca_undo_list = list(FALSE),
@@ -69,13 +69,15 @@ compswap <- function(data, formula,
                      .gifi_princals_options_list = list("noaddpars"),
                      .gifi_trans_options_list = list("noaddpars")) {
 
-  n <- length(.pca_varlist)
+  n <- max(length(.pca_varlist), length(.n_pca_list))
 
-  if (length(.n_pca_list) != n) {
-    rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
-  }
+  # if (length(.n_pca_list) != n) {
+  #   rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
+  # }
 
-  # Recycle parameters to match the length of .pca_varlist
+  # Recycle parameters to match the length of n
+  .pca_varlist <- rep(.pca_varlist, length.out = n)
+  .n_pca_list <- rep(.n_pca_list, length.out = n)
   .prc_eng_list <- rep(.prc_eng_list, length.out = n)
   .lpca_center_list <- rep(.lpca_center_list, length.out = n)
   .lpca_scale_list <- rep(.lpca_scale_list, length.out = n)

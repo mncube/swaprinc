@@ -797,3 +797,40 @@ components.
 #> 1   Raw        0.8690138 37.07927 63.84759
 #> 2   PCA        0.4118838 50.76511 60.32522
 ```
+
+## Compare Multiple Models
+
+Using the same data set for the logistic regression model above, it
+would be useful to compare results for different ways of swapping
+variables. In the example presented below, the compswap helper function
+is used to compare results with 2, 3, 4, and 5 principal components
+swapped in for the six raw independent variables.
+
+``` r
+  # Run swaprinc with prc_eng set to Gifi
+  compswap_results <- compswap(data,
+                              formula = "y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7",
+                              .pca_varlist = list(c("x2", "x3", "x4", "x5", "x6", "x7")),
+                              .n_pca_list = list(2, 3, 4, 5),
+                              .prc_eng_list = list("Gifi"),
+                              .model_options_list = list(list(family = binomial(link = "logit"))))
+#> Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+  
+  # Summarize models
+  summary(compswap_results$all_models)
+#>             Length Class Mode
+#> model_raw   30     glm   list
+#> model_pca_1 30     glm   list
+#> model_pca_2 30     glm   list
+#> model_pca_3 30     glm   list
+#> model_pca_4 30     glm   list
+  
+  # Get model comparisons
+  print(compswap_results$all_comparisons)
+#>   model pseudo_r_squared      AIC      BIC   model_set
+#> 1   Raw        0.8690138 37.07927 63.84759   model_raw
+#> 2   PCA        0.3827987 50.78113 58.42923 model_pca_1
+#> 3   PCA        0.4118838 50.76511 60.32522 model_pca_2
+#> 4   PCA        0.6023670 39.56182 51.03395 model_pca_3
+#> 5   PCA        0.6648237 37.23265 50.61681 model_pca_4
+```

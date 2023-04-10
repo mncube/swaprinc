@@ -153,3 +153,30 @@ the first three principal components.
   # Get model comparisons
   print(swaprinc_result$comparison)
 ```
+
+
+## Compare Multiple Models
+
+Using the same data set for the logistic regression model above, it would be
+useful to compare results for different ways of swapping variables.  In the 
+example presented below, the compswap helper function is used to compare results
+with 2, 3, 4, and 5 principal components swapped in for the six raw independent
+variables.
+
+```{r compswap}
+  # Run swaprinc with prc_eng set to Gifi
+  compswap_results <- compswap(data,
+                              formula = "y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7",
+                              .pca_varlist = list(c("x2", "x3", "x4", "x5", "x6", "x7")),
+                              .n_pca_list = list(2, 3, 4, 5),
+                              .prc_eng_list = list("Gifi"),
+                              .model_options_list = list(list(family = binomial(link = "logit"))))
+  
+  # Summarize models
+  summary(compswap_results$all_models)
+  
+  # Get model comparisons
+  print(compswap_results$all_comparisons)
+
+```
+
