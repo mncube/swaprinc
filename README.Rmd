@@ -48,7 +48,7 @@ will be passed to stats::lm: y ~ x1 + PC1 + PC2
 library(swaprinc)
 
   # Create a small simulated dataset
-  set.seed(42)
+  set.seed(40)
   n <- 50
   x1 <- rnorm(n)
   x2 <- rnorm(n, 5, 15)
