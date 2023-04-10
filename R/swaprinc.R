@@ -68,6 +68,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      prcomp_options = "noaddpars",
                      gifi_princals_options = "noaddpars",
                      gifi_trans_options = "noaddpars") {
+
   # Missing data handler
   if (miss_handler == "omit"){
     data <- data[stats::complete.cases(data), ]
@@ -257,7 +258,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
       df_raw <- lpca_cs(df_raw, scl = TRUE, cnt = FALSE)
     }
 
-    model_raw <- fit_model(df_raw, formula, engine, model_options)
+    invisible(utils::capture.output(model_raw <- fit_model(df_raw, formula, engine, model_options)))
   } else {
     model_raw <- NULL
   }
@@ -406,7 +407,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   formula_pca <- replace_pca_vars_in_formula(formula, pca_vars, pca_terms)
 
   # Fit the PCA model
-  model_pca <- fit_model(data_pca, formula_pca, engine, model_options)
+  invisible(utils::capture.output(model_pca <- fit_model(data_pca, formula_pca, engine, model_options)))
 
   #Compare Models
   compare_models <- function(model_raw, model_pca) {
@@ -496,5 +497,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   model_comparison <- compare_models(model_raw, model_pca)
 
   return(list(model_raw = model_raw, model_pca = model_pca, comparison = model_comparison))
+
+
 
 }

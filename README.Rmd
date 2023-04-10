@@ -184,4 +184,3 @@ variables.
   # Get model comparisons
   print(compswap_results$all_comparisons)
 ```
-
