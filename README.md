@@ -815,8 +815,8 @@ swapped in for the six raw independent variables.
                               .prc_eng_list = list("Gifi"),
                               .model_options_list = list(list(family = binomial(link = "logit"))))
 #> Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-  
-  # Summarize models
+
+  # Return list of models
   summary(compswap_results$all_models)
 #>             Length Class Mode
 #> model_raw   30     glm   list
@@ -824,6 +824,483 @@ swapped in for the six raw independent variables.
 #> model_pca_2 30     glm   list
 #> model_pca_3 30     glm   list
 #> model_pca_4 30     glm   list
+  
+  # Summarize raw model
+  summary(compswap_results$all_models$model_raw)
+#> 
+#> Call:
+#> (function (formula, family = gaussian, data, weights, subset, 
+#>     na.action, start = NULL, etastart, mustart, offset, control = list(...), 
+#>     model = TRUE, method = "glm.fit", x = FALSE, y = TRUE, singular.ok = TRUE, 
+#>     contrasts = NULL, ...) 
+#> {
+#>     cal <- match.call()
+#>     if (is.character(family)) 
+#>         family <- get(family, mode = "function", envir = parent.frame())
+#>     if (is.function(family)) 
+#>         family <- family()
+#>     if (is.null(family$family)) {
+#>         print(family)
+#>         stop("'family' not recognized")
+#>     }
+#>     if (missing(data)) 
+#>         data <- environment(formula)
+#>     mf <- match.call(expand.dots = FALSE)
+#>     m <- match(c("formula", "data", "subset", "weights", "na.action", 
+#>         "etastart", "mustart", "offset"), names(mf), 0L)
+#>     mf <- mf[c(1L, m)]
+#>     mf$drop.unused.levels <- TRUE
+#>     mf[[1L]] <- quote(stats::model.frame)
+#>     mf <- eval(mf, parent.frame())
+#>     if (identical(method, "model.frame")) 
+#>         return(mf)
+#>     if (!is.character(method) && !is.function(method)) 
+#>         stop("invalid 'method' argument")
+#>     if (identical(method, "glm.fit")) 
+#>         control <- do.call("glm.control", control)
+#>     mt <- attr(mf, "terms")
+#>     Y <- model.response(mf, "any")
+#>     if (length(dim(Y)) == 1L) {
+#>         nm <- rownames(Y)
+#>         dim(Y) <- NULL
+#>         if (!is.null(nm)) 
+#>             names(Y) <- nm
+#>     }
+#>     X <- if (!is.empty.model(mt)) 
+#>         model.matrix(mt, mf, contrasts)
+#>     else matrix(, NROW(Y), 0L)
+#>     weights <- as.vector(model.weights(mf))
+#>     if (!is.null(weights) && !is.numeric(weights)) 
+#>         stop("'weights' must be a numeric vector")
+#>     if (!is.null(weights) && any(weights < 0)) 
+#>         stop("negative weights not allowed")
+#>     offset <- as.vector(model.offset(mf))
+#>     if (!is.null(offset)) {
+#>         if (length(offset) != NROW(Y)) 
+#>             stop(gettextf("number of offsets is %d should equal %d (number of observations)", 
+#>                 length(offset), NROW(Y)), domain = NA)
+#>     }
+#>     mustart <- model.extract(mf, "mustart")
+#>     etastart <- model.extract(mf, "etastart")
+#>     fit <- eval(call(if (is.function(method)) "method" else method, 
+#>         x = X, y = Y, weights = weights, start = start, etastart = etastart, 
+#>         mustart = mustart, offset = offset, family = family, 
+#>         control = control, intercept = attr(mt, "intercept") > 
+#>             0L, singular.ok = singular.ok))
+#>     if (length(offset) && attr(mt, "intercept") > 0L) {
+#>         fit2 <- eval(call(if (is.function(method)) "method" else method, 
+#>             x = X[, "(Intercept)", drop = FALSE], y = Y, mustart = fit$fitted.values, 
+#>             weights = weights, offset = offset, family = family, 
+#>             control = control, intercept = TRUE))
+#>         if (!fit2$converged) 
+#>             warning("fitting to calculate the null deviance did not converge -- increase 'maxit'?")
+#>         fit$null.deviance <- fit2$deviance
+#>     }
+#>     if (model) 
+#>         fit$model <- mf
+#>     fit$na.action <- attr(mf, "na.action")
+#>     if (x) 
+#>         fit$x <- X
+#>     if (!y) 
+#>         fit$y <- NULL
+#>     structure(c(fit, list(call = cal, formula = formula, terms = mt, 
+#>         data = data, offset = offset, control = control, method = method, 
+#>         contrasts = attr(X, "contrasts"), xlevels = .getXlevels(mt, 
+#>             mf))), class = c(fit$class, c("glm", "lm")))
+#> })(formula = "y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7", family = structure(list(
+#>     family = "binomial", link = "logit", linkfun = function (mu) 
+#>     .Call(C_logit_link, mu), linkinv = function (eta) 
+#>     .Call(C_logit_linkinv, eta), variance = function (mu) 
+#>     mu * (1 - mu), dev.resids = function (y, mu, wt) 
+#>     .Call(C_binomial_dev_resids, y, mu, wt), aic = function (y, 
+#>         n, mu, wt, dev) 
+#>     {
+#>         m <- if (any(n > 1)) 
+#>             n
+#>         else wt
+#>         -2 * sum(ifelse(m > 0, (wt/m), 0) * dbinom(round(m * 
+#>             y), round(m), mu, log = TRUE))
+#>     }, mu.eta = function (eta) 
+#>     .Call(C_logit_mu_eta, eta), initialize = {
+#>         if (NCOL(y) == 1) {
+#>             if (is.factor(y)) 
+#>                 y <- y != levels(y)[1L]
+#>             n <- rep.int(1, nobs)
+#>             y[weights == 0] <- 0
+#>             if (any(y < 0 | y > 1)) 
+#>                 stop("y values must be 0 <= y <= 1")
+#>             mustart <- (weights * y + 0.5)/(weights + 1)
+#>             m <- weights * y
+#>             if ("binomial" == "binomial" && any(abs(m - round(m)) > 
+#>                 0.001)) 
+#>                 warning(gettextf("non-integer #successes in a %s glm!", 
+#>                   "binomial"), domain = NA)
+#>         }
+#>         else if (NCOL(y) == 2) {
+#>             if ("binomial" == "binomial" && any(abs(y - round(y)) > 
+#>                 0.001)) 
+#>                 warning(gettextf("non-integer counts in a %s glm!", 
+#>                   "binomial"), domain = NA)
+#>             n <- (y1 <- y[, 1L]) + y[, 2L]
+#>             y <- y1/n
+#>             if (any(n0 <- n == 0)) 
+#>                 y[n0] <- 0
+#>             weights <- weights * n
+#>             mustart <- (n * y + 0.5)/(n + 1)
+#>         }
+#>         else stop(gettextf("for the '%s' family, y must be a vector of 0 and 1's\nor a 2 column matrix where col 1 is no. successes and col 2 is no. failures", 
+#>             "binomial"), domain = NA)
+#>     }, validmu = function (mu) 
+#>     all(is.finite(mu)) && all(mu > 0 & mu < 1), valideta = function (eta) 
+#>     TRUE, simulate = function (object, nsim) 
+#>     {
+#>         ftd <- fitted(object)
+#>         n <- length(ftd)
+#>         ntot <- n * nsim
+#>         wts <- object$prior.weights
+#>         if (any(wts%%1 != 0)) 
+#>             stop("cannot simulate from non-integer prior.weights")
+#>         if (!is.null(m <- object$model)) {
+#>             y <- model.response(m)
+#>             if (is.factor(y)) {
+#>                 yy <- factor(1 + rbinom(ntot, size = 1, prob = ftd), 
+#>                   labels = levels(y))
+#>                 split(yy, rep(seq_len(nsim), each = n))
+#>             }
+#>             else if (is.matrix(y) && ncol(y) == 2) {
+#>                 yy <- vector("list", nsim)
+#>                 for (i in seq_len(nsim)) {
+#>                   Y <- rbinom(n, size = wts, prob = ftd)
+#>                   YY <- cbind(Y, wts - Y)
+#>                   colnames(YY) <- colnames(y)
+#>                   yy[[i]] <- YY
+#>                 }
+#>                 yy
+#>             }
+#>             else rbinom(ntot, size = wts, prob = ftd)/wts
+#>         }
+#>         else rbinom(ntot, size = wts, prob = ftd)/wts
+#>     }), class = "family"), data = structure(list(y = c(1, 1, 
+#> 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 
+#> 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 
+#> 1, 1, 1, 1, 1, 1), x1 = structure(c(2L, 1L, 2L, 2L, 2L, 1L, 2L, 
+#> 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 
+#> 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 
+#> 2L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L), levels = c("control", 
+#> "treatment"), class = "factor"), x2 = structure(c(2L, 1L, 3L, 
+#> 2L, 2L, 2L, 3L, 2L, 1L, 2L, 2L, 2L, 2L, 3L, 1L, 3L, 2L, 3L, 3L, 
+#> 3L, 1L, 2L, 2L, 1L, 1L, 2L, 3L, 2L, 1L, 1L, 3L, 2L, 2L, 2L, 1L, 
+#> 2L, 2L, 2L, 3L, 3L, 3L, 2L, 2L, 3L, 1L, 1L, 1L, 1L, 2L, 2L), levels = c("small", 
+#> "medium", "large"), class = "factor"), x3 = structure(c(3L, 3L, 
+#> 1L, 3L, 1L, 3L, 2L, 2L, 3L, 3L, 3L, 3L, 1L, 1L, 1L, 2L, 1L, 3L, 
+#> 1L, 3L, 1L, 1L, 3L, 1L, 3L, 2L, 1L, 1L, 1L, 3L, 3L, 1L, 3L, 3L, 
+#> 3L, 1L, 2L, 3L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 3L, 1L, 2L, 3L, 1L
+#> ), levels = c("short", "average", "tall"), class = "factor"), 
+#>     x4 = structure(c(2L, 3L, 1L, 2L, 2L, 2L, 2L, 2L, 3L, 2L, 
+#>     2L, 2L, 2L, 1L, 2L, 1L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 3L, 2L, 
+#>     2L, 2L, 1L, 2L, 3L, 1L, 2L, 2L, 2L, 3L, 1L, 2L, 3L, 1L, 2L, 
+#>     1L, 2L, 2L, 1L, 3L, 3L, 3L, 3L, 2L, 2L), levels = c("lowbit", 
+#>     "most", "highbit"), class = "factor"), x5 = structure(c(3L, 
+#>     2L, 1L, 3L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 1L, 2L, 3L, 1L, 
+#>     1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 3L, 1L, 1L, 1L, 1L, 3L, 1L, 
+#>     2L, 3L, 1L, 1L, 1L, 3L, 3L, 2L, 1L, 1L, 3L, 1L, 2L, 3L, 2L, 
+#>     3L, 3L, 3L, 3L), levels = c("under", "healthy", "over"), class = "factor"), 
+#>     x6 = structure(c(1L, 2L, 1L, 2L, 2L, 1L, 2L, 3L, 1L, 3L, 
+#>     2L, 3L, 2L, 2L, 2L, 1L, 1L, 2L, 2L, 3L, 1L, 2L, 1L, 3L, 3L, 
+#>     2L, 2L, 2L, 1L, 1L, 3L, 3L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 
+#>     1L, 2L, 1L, 2L, 2L, 1L, 3L, 1L, 2L, 3L), levels = c("small", 
+#>     "medium", "large"), class = "factor"), x7 = structure(c(2L, 
+#>     3L, 1L, 3L, 2L, 1L, 1L, 3L, 3L, 3L, 3L, 3L, 1L, 1L, 3L, 1L, 
+#>     1L, 3L, 1L, 2L, 2L, 2L, 1L, 3L, 3L, 1L, 1L, 1L, 2L, 3L, 1L, 
+#>     2L, 1L, 3L, 3L, 1L, 2L, 2L, 1L, 1L, 1L, 3L, 1L, 1L, 3L, 3L, 
+#>     3L, 3L, 3L, 2L), levels = c("small", "medium", "large"), class = "factor")), class = "data.frame", row.names = c(NA, 
+#> -50L)))
+#> 
+#> Deviance Residuals: 
+#>     Min       1Q   Median       3Q      Max  
+#> -1.7567   0.0000   0.0000   0.0000   0.9994  
+#> 
+#> Coefficients:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> (Intercept) -2.897e+01  3.924e+04  -0.001    0.999
+#> x1treatment  8.684e-01  2.203e+00   0.394    0.693
+#> x2medium    -2.759e+01  3.604e+04  -0.001    0.999
+#> x2large     -3.264e+01  3.809e+04  -0.001    0.999
+#> x3average    2.511e+01  1.841e+04   0.001    0.999
+#> x3tall       4.673e+00  1.769e+04   0.000    1.000
+#> x4most       9.150e-12  2.507e+00   0.000    1.000
+#> x4highbit   -2.219e+01  3.954e+04  -0.001    1.000
+#> x5healthy    4.025e+01  1.611e+04   0.002    0.998
+#> x5over       5.233e+01  2.104e+04   0.002    0.998
+#> x6medium    -4.181e+00  1.968e+04   0.000    1.000
+#> x6large      5.650e+01  2.313e+04   0.002    0.998
+#> x7medium    -8.684e-01  2.203e+00  -0.394    0.693
+#> x7large      2.995e+01  2.079e+04   0.001    0.999
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 69.3147  on 49  degrees of freedom
+#> Residual deviance:  9.0793  on 36  degrees of freedom
+#> AIC: 37.079
+#> 
+#> Number of Fisher Scoring iterations: 22
+  
+  # Summarize pca model with 5 principal components
+  summary(compswap_results$all_models$model_pca_4)
+#> 
+#> Call:
+#> (function (formula, family = gaussian, data, weights, subset, 
+#>     na.action, start = NULL, etastart, mustart, offset, control = list(...), 
+#>     model = TRUE, method = "glm.fit", x = FALSE, y = TRUE, singular.ok = TRUE, 
+#>     contrasts = NULL, ...) 
+#> {
+#>     cal <- match.call()
+#>     if (is.character(family)) 
+#>         family <- get(family, mode = "function", envir = parent.frame())
+#>     if (is.function(family)) 
+#>         family <- family()
+#>     if (is.null(family$family)) {
+#>         print(family)
+#>         stop("'family' not recognized")
+#>     }
+#>     if (missing(data)) 
+#>         data <- environment(formula)
+#>     mf <- match.call(expand.dots = FALSE)
+#>     m <- match(c("formula", "data", "subset", "weights", "na.action", 
+#>         "etastart", "mustart", "offset"), names(mf), 0L)
+#>     mf <- mf[c(1L, m)]
+#>     mf$drop.unused.levels <- TRUE
+#>     mf[[1L]] <- quote(stats::model.frame)
+#>     mf <- eval(mf, parent.frame())
+#>     if (identical(method, "model.frame")) 
+#>         return(mf)
+#>     if (!is.character(method) && !is.function(method)) 
+#>         stop("invalid 'method' argument")
+#>     if (identical(method, "glm.fit")) 
+#>         control <- do.call("glm.control", control)
+#>     mt <- attr(mf, "terms")
+#>     Y <- model.response(mf, "any")
+#>     if (length(dim(Y)) == 1L) {
+#>         nm <- rownames(Y)
+#>         dim(Y) <- NULL
+#>         if (!is.null(nm)) 
+#>             names(Y) <- nm
+#>     }
+#>     X <- if (!is.empty.model(mt)) 
+#>         model.matrix(mt, mf, contrasts)
+#>     else matrix(, NROW(Y), 0L)
+#>     weights <- as.vector(model.weights(mf))
+#>     if (!is.null(weights) && !is.numeric(weights)) 
+#>         stop("'weights' must be a numeric vector")
+#>     if (!is.null(weights) && any(weights < 0)) 
+#>         stop("negative weights not allowed")
+#>     offset <- as.vector(model.offset(mf))
+#>     if (!is.null(offset)) {
+#>         if (length(offset) != NROW(Y)) 
+#>             stop(gettextf("number of offsets is %d should equal %d (number of observations)", 
+#>                 length(offset), NROW(Y)), domain = NA)
+#>     }
+#>     mustart <- model.extract(mf, "mustart")
+#>     etastart <- model.extract(mf, "etastart")
+#>     fit <- eval(call(if (is.function(method)) "method" else method, 
+#>         x = X, y = Y, weights = weights, start = start, etastart = etastart, 
+#>         mustart = mustart, offset = offset, family = family, 
+#>         control = control, intercept = attr(mt, "intercept") > 
+#>             0L, singular.ok = singular.ok))
+#>     if (length(offset) && attr(mt, "intercept") > 0L) {
+#>         fit2 <- eval(call(if (is.function(method)) "method" else method, 
+#>             x = X[, "(Intercept)", drop = FALSE], y = Y, mustart = fit$fitted.values, 
+#>             weights = weights, offset = offset, family = family, 
+#>             control = control, intercept = TRUE))
+#>         if (!fit2$converged) 
+#>             warning("fitting to calculate the null deviance did not converge -- increase 'maxit'?")
+#>         fit$null.deviance <- fit2$deviance
+#>     }
+#>     if (model) 
+#>         fit$model <- mf
+#>     fit$na.action <- attr(mf, "na.action")
+#>     if (x) 
+#>         fit$x <- X
+#>     if (!y) 
+#>         fit$y <- NULL
+#>     structure(c(fit, list(call = cal, formula = formula, terms = mt, 
+#>         data = data, offset = offset, control = control, method = method, 
+#>         contrasts = attr(X, "contrasts"), xlevels = .getXlevels(mt, 
+#>             mf))), class = c(fit$class, c("glm", "lm")))
+#> })(formula = y ~ x1 + PC1 + PC2 + PC3 + PC4 + PC5, family = structure(list(
+#>     family = "binomial", link = "logit", linkfun = function (mu) 
+#>     .Call(C_logit_link, mu), linkinv = function (eta) 
+#>     .Call(C_logit_linkinv, eta), variance = function (mu) 
+#>     mu * (1 - mu), dev.resids = function (y, mu, wt) 
+#>     .Call(C_binomial_dev_resids, y, mu, wt), aic = function (y, 
+#>         n, mu, wt, dev) 
+#>     {
+#>         m <- if (any(n > 1)) 
+#>             n
+#>         else wt
+#>         -2 * sum(ifelse(m > 0, (wt/m), 0) * dbinom(round(m * 
+#>             y), round(m), mu, log = TRUE))
+#>     }, mu.eta = function (eta) 
+#>     .Call(C_logit_mu_eta, eta), initialize = {
+#>         if (NCOL(y) == 1) {
+#>             if (is.factor(y)) 
+#>                 y <- y != levels(y)[1L]
+#>             n <- rep.int(1, nobs)
+#>             y[weights == 0] <- 0
+#>             if (any(y < 0 | y > 1)) 
+#>                 stop("y values must be 0 <= y <= 1")
+#>             mustart <- (weights * y + 0.5)/(weights + 1)
+#>             m <- weights * y
+#>             if ("binomial" == "binomial" && any(abs(m - round(m)) > 
+#>                 0.001)) 
+#>                 warning(gettextf("non-integer #successes in a %s glm!", 
+#>                   "binomial"), domain = NA)
+#>         }
+#>         else if (NCOL(y) == 2) {
+#>             if ("binomial" == "binomial" && any(abs(y - round(y)) > 
+#>                 0.001)) 
+#>                 warning(gettextf("non-integer counts in a %s glm!", 
+#>                   "binomial"), domain = NA)
+#>             n <- (y1 <- y[, 1L]) + y[, 2L]
+#>             y <- y1/n
+#>             if (any(n0 <- n == 0)) 
+#>                 y[n0] <- 0
+#>             weights <- weights * n
+#>             mustart <- (n * y + 0.5)/(n + 1)
+#>         }
+#>         else stop(gettextf("for the '%s' family, y must be a vector of 0 and 1's\nor a 2 column matrix where col 1 is no. successes and col 2 is no. failures", 
+#>             "binomial"), domain = NA)
+#>     }, validmu = function (mu) 
+#>     all(is.finite(mu)) && all(mu > 0 & mu < 1), valideta = function (eta) 
+#>     TRUE, simulate = function (object, nsim) 
+#>     {
+#>         ftd <- fitted(object)
+#>         n <- length(ftd)
+#>         ntot <- n * nsim
+#>         wts <- object$prior.weights
+#>         if (any(wts%%1 != 0)) 
+#>             stop("cannot simulate from non-integer prior.weights")
+#>         if (!is.null(m <- object$model)) {
+#>             y <- model.response(m)
+#>             if (is.factor(y)) {
+#>                 yy <- factor(1 + rbinom(ntot, size = 1, prob = ftd), 
+#>                   labels = levels(y))
+#>                 split(yy, rep(seq_len(nsim), each = n))
+#>             }
+#>             else if (is.matrix(y) && ncol(y) == 2) {
+#>                 yy <- vector("list", nsim)
+#>                 for (i in seq_len(nsim)) {
+#>                   Y <- rbinom(n, size = wts, prob = ftd)
+#>                   YY <- cbind(Y, wts - Y)
+#>                   colnames(YY) <- colnames(y)
+#>                   yy[[i]] <- YY
+#>                 }
+#>                 yy
+#>             }
+#>             else rbinom(ntot, size = wts, prob = ftd)/wts
+#>         }
+#>         else rbinom(ntot, size = wts, prob = ftd)/wts
+#>     }), class = "family"), data = structure(list(y = c(1, 1, 
+#> 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 
+#> 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 
+#> 1, 1, 1, 1, 1, 1), x1 = structure(c(2L, 1L, 2L, 2L, 2L, 1L, 2L, 
+#> 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 
+#> 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 
+#> 2L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L), levels = c("control", 
+#> "treatment"), class = "factor"), PC1 = c(-0.174985567831333, 
+#> -1.51738388060647, 1.47214289475174, -0.653351839178653, 0.643321490538164, 
+#> 0.0509214014196, 0.697388287504449, -0.03899627224904, -1.80553625569436, 
+#> -0.346075112611793, -0.12281376553672, -0.657034811896078, 0.869228459789096, 
+#> 1.22975719619769, -0.878481442620089, 1.24906705183288, 0.892035783985493, 
+#> -0.382537794186797, 1.22975719619769, 0.599876253888636, -0.400115171272768, 
+#> 0.423743116180515, 0.581459475061534, -1.52145024368422, -1.19274072426147, 
+#> 0.646152616870241, 1.14004250478095, 1.17852152556349, 0.130422902369166, 
+#> -1.80553625569436, 1.13507628891396, 0.42006014346309, 0.0509214014196, 
+#> -0.100006441340323, -1.29780550624882, 1.17852152556349, -0.0874851018262282, 
+#> -0.814271396178037, 1.25256452039409, 0.939773986058494, 1.24906705183288, 
+#> -0.342775530254694, 0.892035783985493, 1.00668135327884, -1.74084311388565, 
+#> -1.49457655641007, -1.52145024368422, -1.71803578968925, -0.653351839178653, 
+#> 0.109100444178805), PC2 = c(1.43220443157834, -0.291379536117545, 
+#> 0.648795427435331, -0.432109433894531, -0.998624157524348, 1.58585626892584, 
+#> -0.17990716202936, -0.914465515204791, 1.2503817945849, -0.670425582891932, 
+#> -0.410438713236568, -0.683127255239056, -0.844972320176844, -0.914636623925082, 
+#> -1.38752517716496, 1.29382275352271, 0.709490682872729, -0.403102553523582, 
+#> -0.914636623925082, -0.322598791786851, 0.476788688307905, -1.00759320583519, 
+#> 1.6075269895838, -1.45313533652027, -0.740506691798413, -0.199944994089469, 
+#> -0.815965439805896, -0.934674455985191, 0.498459408965869, 1.2503817945849, 
+#> -0.258649090247694, -1.25861102717971, 1.58585626892584, 1.14402428981301, 
+#> -0.282410487806705, -0.934674455985191, 1.17919545095464, 1.61761209356755, 
+#> 0.639826379124491, 1.38352488933105, 1.29382275352271, -1.3301457406056, 
+#> 0.709490682872729, -0.269609297837707, -0.557090189088367, 1.26308346693203, 
+#> -1.45313533652027, 0.997372813961206, -0.432109433894531, -1.27131269952684
+#> ), PC3 = c(0.449785884690901, 0.308640006745756, -0.902416024113477, 
+#> 1.45758826948625, -0.639743989196388, 0.284492917553269, 0.862910897615201, 
+#> 1.08014368947902, -0.37450516649822, 1.57517295286018, 1.47237853932543, 
+#> 1.56650405973069, -0.80503695633402, -0.234061120708687, -1.10538603669352, 
+#> 0.37522975963663, -1.47951323644851, 1.85401171639506, -0.234061120708687, 
+#> 1.64439167179783, -2.11318842148887, -0.645865365906085, 0.299283187392454, 
+#> -1.36990951998025, 0.782326177391888, 0.472608827416086, -0.408613509425209, 
+#> -0.624363190907802, -2.09839815164968, -0.37450516649822, 1.65977247008642, 
+#> -0.53694957566164, 0.284492917553269, 0.797902259210947, 0.314761383455453, 
+#> -0.624363190907802, -0.0513647553999538, 0.0763466111597259, 
+#> -0.908537400823174, 0.194555994210411, 0.37522975963663, -0.321208154354713, 
+#> -1.47951323644851, 1.04358466304142, -0.201179526474588, -0.365836273368731, 
+#> -1.36990951998025, -0.875655806589075, 1.45758826948625, -0.545618468791128
+#> ), PC4 = c(1.41043171825911, -1.66952763368889, 0.00806621520617041, 
+#> 1.04739675792601, -0.883793949504214, 1.50645633422901, 0.251645238448398, 
+#> -1.35005368172934, -0.0545824909985992, -0.42550858271601, -1.41890351166185, 
+#> 1.02004269489766, -0.787769333534313, 0.859421342103733, 0.866776557209718, 
+#> -0.23719835873413, -0.618375468457685, 1.31132691187483, 0.859421342103733, 
+#> -0.988686325484912, 1.22981151754282, 0.136955042469977, -0.959843935358847, 
+#> 0.0901380477975801, 0.4979540272802, -1.03303390747461, -0.523839179585493, 
+#> -0.425257803819279, -1.23648875204504, -0.0545824909985992, -0.530150179799976, 
+#> 0.109600979441622, 1.50645633422901, -1.24950964658522, -2.69027662566309, 
+#> -0.425257803819279, 1.50663561121997, 0.661147271875326, 1.02881520718036, 
+#> -0.599709888449165, -0.23719835873413, 1.38886522482717, -0.618375468457685, 
+#> 0.614156768163433, -0.127772463114366, -1.50013376861227, 0.0901380477975801, 
+#> 0.0416214019622631, 1.04739675792601, 1.55515225705529), PC5 = c(0.0348022564926567, 
+#> -0.890986783794518, 1.05392622708464, 0.771152127648713, -0.0906445840156123, 
+#> -0.880860990272764, -1.87737186652042, 1.27545855833962, -0.112258093969213, 
+#> 0.923309354501443, 1.33661093166784, 0.591881869102698, -1.00630783078103, 
+#> -0.2902612667598, 1.85485731891141, 0.752793581605774, 0.103848344443018, 
+#> 0.435252056008574, -0.2902612667598, -1.02506544489842, 1.11850744775535, 
+#> -0.324675902635999, -0.315402186253632, -0.982433997042629, 1.25633652966874, 
+#> -1.3074404762599, -1.34220790242117, 0.279670123500725, 1.68396625177449, 
+#> -0.112258093969213, -0.654750737382078, -0.503946161182014, -0.880860990272764, 
+#> 2.44676710689189, -0.656955465174132, 0.279670123500725, 0.152920141710444, 
+#> -2.62321880091537, 0.81989490846425, -0.533184372675984, 0.752793581605774, 
+#> 1.19040265834536, 0.103848344443018, -0.591393912238663, -1.10429638397548, 
+#> 0.219169391429533, -0.982433997042629, 0.00585979124857411, 0.771152127648713, 
+#> -0.835373646580759)), class = "data.frame", row.names = c("1", 
+#> "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", 
+#> "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", 
+#> "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", 
+#> "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", 
+#> "47", "48", "49", "50")))
+#> 
+#> Deviance Residuals: 
+#>      Min        1Q    Median        3Q       Max  
+#> -2.05463  -0.14828  -0.00598   0.13932   2.09125  
+#> 
+#> Coefficients:
+#>             Estimate Std. Error z value Pr(>|z|)   
+#> (Intercept)  -0.7371     0.8436  -0.874  0.38229   
+#> x1treatment   1.9810     1.3851   1.430  0.15263   
+#> PC1          -3.3874     1.2246  -2.766  0.00567 **
+#> PC2          -1.6857     0.9528  -1.769  0.07685 . 
+#> PC3           1.0024     0.7908   1.268  0.20493   
+#> PC4           2.4352     0.9726   2.504  0.01229 * 
+#> PC5           0.4204     0.5355   0.785  0.43238   
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 69.315  on 49  degrees of freedom
+#> Residual deviance: 23.233  on 43  degrees of freedom
+#> AIC: 37.233
+#> 
+#> Number of Fisher Scoring iterations: 7
   
   # Get model comparisons
   print(compswap_results$all_comparisons)

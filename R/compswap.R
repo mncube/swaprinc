@@ -71,10 +71,6 @@ compswap <- function(data, formula,
 
   n <- max(length(.pca_varlist), length(.n_pca_list))
 
-  # if (length(.n_pca_list) != n) {
-  #   rlang::abort("Length of .pca_varlist and .n_pca_list must be the same.")
-  # }
-
   # Recycle parameters to match the length of n
   .pca_varlist <- rep(.pca_varlist, length.out = n)
   .n_pca_list <- rep(.n_pca_list, length.out = n)

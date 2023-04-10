@@ -171,12 +171,17 @@ variables.
                               .n_pca_list = list(2, 3, 4, 5),
                               .prc_eng_list = list("Gifi"),
                               .model_options_list = list(list(family = binomial(link = "logit"))))
-  
-  # Summarize models
+
+  # Return list of models
   summary(compswap_results$all_models)
+  
+  # Summarize raw model
+  summary(compswap_results$all_models$model_raw)
+  
+  # Summarize pca model with 5 principal components
+  summary(compswap_results$all_models$model_pca_4)
   
   # Get model comparisons
   print(compswap_results$all_comparisons)
-
 ```
 
