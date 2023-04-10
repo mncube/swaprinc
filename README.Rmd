@@ -1,0 +1,76 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# swaprinc
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of swaprinc is to help compare a regression model with raw variables to
+a regression model where some of the raw variables have been swapped out for
+principal components.
+
+## Installation
+
+You can install the development version of swaprinc from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("mncube/swaprinc")
+```
+
+## A Simple Example
+
+In the example below, a regression model is used to estimate the relation between
+x1 and y after controlling for x2 - x5.  
+
+Using the default engine of "stats" specifies that stats::lm will be used to fit 
+the statistical model and using the default prc_eng of "stats" specifies that stats::prcomp will be used to extract principal components.  
+
+The formula parameter specifies the "raw model" which will be passed to stats::lm.
+The pca_vars and n_pca_components parameters specify that raw variables x2 - x5
+will be used to extract 2 principal components, and then the following "pca model"
+will be passed to stats::lm: y ~ x1 + PC1 + PC2
+
+```{r simple}
+library(swaprinc)
+
+  # Create a small simulated dataset
+  set.seed(42)
+  n <- 50
+  x1 <- rnorm(n)
+  x2 <- rnorm(n)
+  x3 <- rnorm(n)
+  x4 <- rnorm(n)
+  x5 <- rnorm(n)
+  y <- 1 + 2 * x1 + 3 * x2 + 2.5*x4 - 3.5*x5 + rnorm(n)
+  data <- data.frame(y, x1, x2, x3, x4, x5)
+
+  # Run swaprinc with
+  swaprinc_result <- swaprinc(data,
+                              formula = "y ~ x1 + x2 + x3 + x4 + x5",
+                              pca_vars = c("x2", "x3", "x4", "x5"),
+                              n_pca_components = 2)
+  
+  # Summarize raw model
+  summary(swaprinc_result$model_raw)
+  
+  # Summarize pca model
+  summary(swaprinc_result$model_pca)
+  
+  # Get model comparisons
+  print(swaprinc_result$comparison)
+
+```
