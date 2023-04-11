@@ -27,76 +27,53 @@ swaprinc_loud(
 )
 }
 \arguments{
-\item{data}{A dataframe}
+\item{data}{(see swaprinc documentation)}
 
-\item{formula}{A quoted model formula}
+\item{formula}{(see swaprinc documentation)}
 
-\item{engine}{The engine for fitting the model.  Options are 'stats' or 'lme4'.}
+\item{engine}{(see swaprinc documentation)}
 
-\item{prc_eng}{Then engine or extracting principal components.  Options are
-'stats', 'Gifi', and 'stats_Gifi'.  The stats_Gifi engine uses
-tidyselect::where(is.numeric) to select the pca_vars for stats::prcomp and
--tidyselect::where(is.numeric) to select the pca_vars for Gifi::princals.}
+\item{prc_eng}{(see swaprinc documentation)}
 
-\item{pca_vars}{Variables to include in the principal component analysis.
-These variables will be swapped out for principal components}
+\item{pca_vars}{(see swaprinc documentation)}
 
-\item{n_pca_components}{The number of principal components to include in the
-model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
-vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).}
+\item{n_pca_components}{(see swaprinc documentation)}
 
-\item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
+\item{norun_raw}{(see swaprinc documentation)}
 
-\item{lpca_center}{Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
-numeric variables will be included in the centering.  Parameter takes values
-'all' to center raw and pca variables, 'raw' to only center variables for the
-raw variable model fitting, 'pca' to only center pca_vars before pca regression
-model fitting, and 'none' to skip lpca centering.}
+\item{lpca_center}{(see swaprinc documentation)}
 
-\item{lpca_scale}{Scale data as in the LearnPCA Step-by-Step PCA vignette.  Only
-numeric variables will be included in the scaling.  Parameter takes values
-'all' to scale raw and pca variables, 'raw' to only scale variables for the
-raw variable model fitting, 'pca' to only scale pca_vars before pca regression
-model fitting, and 'none' to skip lpca scaling.}
+\item{lpca_scale}{(see swaprinc documentation)}
 
-\item{lpca_undo}{Undo centering and scaling of pca_vars as in the LearnPCA
-Step-by-Step PCA vignette.}
+\item{lpca_undo}{(see swaprinc documentation)}
 
-\item{gifi_transform}{Use Gifi optimal scaling to transform a set of variables.
-Parameter takes values 'none', 'all', 'raw', and 'pca'}
+\item{gifi_transform}{(see swaprinc documentation)}
 
-\item{gifi_trans_vars}{A vector of variables to include in the Gifi optimal
-scaling transformation}
+\item{gifi_trans_vars}{(see swaprinc documentation)}
 
-\item{gifi_trans_dims}{Number of dimensions to extract in the Gifi optimal
-scaling transformation algorithm}
+\item{gifi_trans_dims}{(see swaprinc documentation)}
 
-\item{no_tresp}{When set to TRUE, no_tresp (No transform response) will exclude
-the response variable from from pre-modeling and pre-pca transformations.
-Specifically, setting no_tresp to TRUE will exclude the response variable from
-the transformation specified in lpca_center and lpca_scale.}
+\item{no_tresp}{(see swaprinc documentation)}
 
-\item{miss_handler}{Choose how swaprinc handles missing data on the input
-data.  Default is 'none'.  Use 'omit' for complete case analysis.}
+\item{miss_handler}{(see swaprinc documentation)}
 
-\item{model_options}{Pass additional arguments to statistical modeling functions
-(i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
-(no additional parameters)}
+\item{model_options}{(see swaprinc documentation)}
 
-\item{prcomp_options}{Pass additional arguments to stats::prcomp for
-prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
-(no additional parameters)}
+\item{prcomp_options}{(see swaprinc documentation)}
 
-\item{gifi_princals_options}{Pass additional arguments to Gifi::princals for
-prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
-(no additional parameters)}
+\item{gifi_princals_options}{(see swaprinc documentation)}
 
-\item{gifi_trans_options}{Pass additional arguments to Gifi::princals for
-gifi_transform.  Default is 'noaddpars' (no additional parameters)}
+\item{gifi_trans_options}{(see swaprinc documentation)}
 }
 \value{
-A list with fitted models
+(see swaprinc documentation)
 }
 \description{
 Swap in Principal Components (Loud Version of swaprinc)
 }
+\examples{
+\dontrun{
+(see swaprinc documentation)
+}
+}
+\keyword{internal}
