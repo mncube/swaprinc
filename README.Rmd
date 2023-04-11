@@ -145,10 +145,10 @@ the first three principal components.
                               model_options = list(family = binomial(link = "logit")))
   
   # Summarize raw model
-  summary(swaprinc_result$model_raw)
+  broom::tidy(swaprinc_result$model_raw)
   
   # Summarize pca model
-  summary(swaprinc_result$model_pca)
+  broom::tidy(swaprinc_result$model_pca)
   
   # Get model comparisons
   print(swaprinc_result$comparison)
@@ -176,10 +176,10 @@ variables.
   summary(compswap_results$all_models)
 
   # Summarize raw model
-  summary(compswap_results$all_models$model_raw)
+  broom::tidy(compswap_results$all_models$model_raw)
   
   # Summarize pca model with 5 principal components
-  summary(compswap_results$all_models$model_pca_4)
+  broom::tidy(compswap_results$all_models$model_pca_4)
   
   # Get model comparisons
   print(compswap_results$all_comparisons)
