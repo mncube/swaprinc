@@ -6,9 +6,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of swaprinc is to help compare a regression model with raw
-variables to a regression model where some of the raw variables have
-been swapped out for principal components.
+The objective of swaprinc is to streamline the comparison between a
+regression model using original variables and a model in which some of
+these variables have been swapped out for principal components.
 
 ## Installation
 
@@ -22,28 +22,30 @@ devtools::install_github("mncube/swaprinc")
 
 ## A Simple Example
 
-In the example below, a regression model is used to estimate the
-relation between x1 and y after controlling for x2 through x10.
+In the simple example provided, a regression model estimates the
+relationship between x1 and y, while controlling for variables x2
+through x10.
 
-Using the default engine of “stats” specifies that stats::lm will be
-used to fit the statistical model and using the default prc_eng of
-“stats” specifies that stats::prcomp will be used to extract principal
-components.
+By using the default engine, “stats”, the statistical model is fitted
+with stats::lm, and by using the default prc_eng, “stats”, principal
+components are extracted with stats::prcomp.
 
-The formula parameter specifies the “raw model” which will be passed to
-stats::lm. The pca_vars and n_pca_components parameters specify that raw
-variables x2 through x10 will be used to extract 3 principal components,
-and then the following “pca model” will be passed to stats::lm: y \~
-x1 + PC1 + PC2 + PC3
+The “raw model” is specified by the formula parameter, which is passed
+to stats::lm. The pca_vars and n_pca_components parameters indicate that
+variables x2 to x10 will be used to extract three principal components.
+Subsequently, the “pca model” is passed to stats::lm as follows: y \~
+x1 + PC1 + PC2 + PC3.
 
-Setting the parameters lpca_center and lpca_scale to ‘pca’ specifies
-that before passing the data in pca_vars to stats::prcomp, centering and
-scaling will be executed as outlined in the LearnPCA Step-by-Step PCA
-vignette:
-(<https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf>).
-Setting the miss_handler parameter to ‘omit’ specifies that the rows of
-the data frame passed to swaprinc will be subset with
-stats::complete.cases.
+By setting the lpca_center and lpca_scale parameters to ‘pca’, the data
+in pca_vars will be centered and scaled according to the guidelines in
+the [LearnPCA Step-by-Step PCA
+vignette](https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf)
+before being passed to stats::prcomp. The miss_handler parameter, set to
+‘omit’, ensures that only complete cases are included by subsetting the
+data frame rows with stats::complete.cases.
+
+As a recommendation, use broom and broom.mixed to summarize model
+results to avoid lengthy summaries.
 
 ``` r
 library(swaprinc)
@@ -110,13 +112,17 @@ library(swaprinc)
 
 ## The Motivating Example
 
-A chronic difficulty in applied statistics and data science is logistic
-regression with a set of categorical independent variables. In this
-motivating example, swaprinc will be used to compare a ‘raw’ logistic
-regression model with five categorical independent variables to a ‘pca’
-logistic regression model where Gifi::princals will be used to swap out
-six of the independent variables for the first three principal
-components.
+A common challenge in applied statistics and data science involves
+performing logistic regression with a set of categorical independent
+variables. In this motivating example, swaprinc is employed to compare a
+‘raw’ logistic regression model containing seven categorical independent
+variables with a ‘pca’ logistic regression model. The latter model
+replaces six of the independent variables with their first three
+principal components, using Gifi::princals to extract principal
+components. For a comprehensive tutorial on Gifi, refer to [Nonlinear
+Principal Components Analysis: Multivariate Analysis with Optimal
+Scaling
+(MVAOS)](https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html#2_Package).
 
 ``` r
  # Create a small simulated dataset
@@ -203,11 +209,11 @@ components.
 
 ## Compare Multiple Models
 
-Using the same data set for the logistic regression model above, it
-would be useful to compare results for different ways of swapping
-variables. In the example presented below, the compswap helper function
-is used to compare results with 2, 3, 4, and 5 principal components
-swapped in for the six raw independent variables.
+Utilizing the same dataset as in the logistic regression model mentioned
+earlier, it is beneficial to compare outcomes for various swaps. In the
+example below, the compswap helper function facilitates the comparison
+of results with 2, 3, 4, and 5 principal components replacing six
+original independent variables.
 
 ``` r
   # Run swaprinc with prc_eng set to Gifi
@@ -227,9 +233,19 @@ swapped in for the six raw independent variables.
 #> model_pca_2 30     glm   list
 #> model_pca_3 30     glm   list
 #> model_pca_4 30     glm   list
-
-  # Summarize raw model
-  broom::tidy(compswap_results$all_models$model_raw)
+  
+  # Get model comparisons
+  print(compswap_results$all_comparisons)
+#>   model pseudo_r_squared      AIC      BIC   model_set
+#> 1   Raw        0.8690138 37.07927 63.84759   model_raw
+#> 2   PCA        0.3827987 50.78113 58.42923 model_pca_1
+#> 3   PCA        0.4118838 50.76511 60.32522 model_pca_2
+#> 4   PCA        0.6023670 39.56182 51.03395 model_pca_3
+#> 5   PCA        0.6648237 37.23265 50.61681 model_pca_4
+  
+  # View model summaries
+  lapply(compswap_results$all_models, broom::tidy)
+#> $model_raw
 #> # A tibble: 14 × 5
 #>    term         estimate std.error statistic p.value
 #>    <chr>           <dbl>     <dbl>     <dbl>   <dbl>
@@ -247,9 +263,38 @@ swapped in for the six raw independent variables.
 #> 12 x6large      5.65e+ 1  23134.    2.44e- 3   0.998
 #> 13 x7medium    -8.68e- 1      2.20 -3.94e- 1   0.693
 #> 14 x7large      3.00e+ 1  20792.    1.44e- 3   0.999
-  
-  # Summarize pca model with 5 principal components
-  broom::tidy(compswap_results$all_models$model_pca_4)
+#> 
+#> $model_pca_1
+#> # A tibble: 4 × 5
+#>   term        estimate std.error statistic  p.value
+#>   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
+#> 1 (Intercept)   -0.285     0.545    -0.523 0.601   
+#> 2 x1treatment    0.464     0.767     0.604 0.546   
+#> 3 PC1           -1.91      0.519    -3.68  0.000229
+#> 4 PC2           -0.483     0.375    -1.29  0.198   
+#> 
+#> $model_pca_2
+#> # A tibble: 5 × 5
+#>   term        estimate std.error statistic  p.value
+#>   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
+#> 1 (Intercept)   -0.162     0.567    -0.286 0.775   
+#> 2 x1treatment    0.303     0.810     0.374 0.708   
+#> 3 PC1           -2.00      0.539    -3.72  0.000201
+#> 4 PC2           -0.501     0.387    -1.29  0.195   
+#> 5 PC3            0.339     0.381     0.891 0.373   
+#> 
+#> $model_pca_3
+#> # A tibble: 6 × 5
+#>   term        estimate std.error statistic p.value
+#>   <chr>          <dbl>     <dbl>     <dbl>   <dbl>
+#> 1 (Intercept)   -0.348     0.752    -0.463 0.643  
+#> 2 x1treatment    1.28      1.14      1.12  0.261  
+#> 3 PC1           -2.78      0.851    -3.26  0.00110
+#> 4 PC2           -1.32      0.723    -1.83  0.0674 
+#> 5 PC3            0.533     0.565     0.943 0.346  
+#> 6 PC4            1.79      0.680     2.63  0.00851
+#> 
+#> $model_pca_4
 #> # A tibble: 7 × 5
 #>   term        estimate std.error statistic p.value
 #>   <chr>          <dbl>     <dbl>     <dbl>   <dbl>
@@ -260,13 +305,4 @@ swapped in for the six raw independent variables.
 #> 5 PC3            1.00      0.791     1.27  0.205  
 #> 6 PC4            2.44      0.973     2.50  0.0123 
 #> 7 PC5            0.420     0.536     0.785 0.432
-  
-  # Get model comparisons
-  print(compswap_results$all_comparisons)
-#>   model pseudo_r_squared      AIC      BIC   model_set
-#> 1   Raw        0.8690138 37.07927 63.84759   model_raw
-#> 2   PCA        0.3827987 50.78113 58.42923 model_pca_1
-#> 3   PCA        0.4118838 50.76511 60.32522 model_pca_2
-#> 4   PCA        0.6023670 39.56182 51.03395 model_pca_3
-#> 5   PCA        0.6648237 37.23265 50.61681 model_pca_4
 ```

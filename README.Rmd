@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of swaprinc is to help compare a regression model with raw variables to
-a regression model where some of the raw variables have been swapped out for
-principal components.
+The objective of swaprinc is to streamline the comparison between a regression 
+model using original variables and a model in which some of these variables have 
+been swapped out for principal components.
 
 ## Installation
 
@@ -33,23 +33,26 @@ devtools::install_github("mncube/swaprinc")
 
 ## A Simple Example
 
-In the example below, a regression model is used to estimate the relation between
-x1 and y after controlling for x2 through x10.  
+In the simple example provided, a regression model estimates the relationship 
+between x1 and y, while controlling for variables x2 through x10.
 
-Using the default engine of "stats" specifies that stats::lm will be used to fit 
-the statistical model and using the default prc_eng of "stats" specifies that 
-stats::prcomp will be used to extract principal components.  
+By using the default engine, "stats", the statistical model is fitted with 
+stats::lm, and by using the default prc_eng, "stats", principal components are 
+extracted with stats::prcomp.
 
-The formula parameter specifies the "raw model" which will be passed to stats::lm.
-The pca_vars and n_pca_components parameters specify that raw variables 
-x2 through x10 will be used to extract 3 principal components, and then the 
-following "pca model" will be passed to stats::lm: y ~ x1 + PC1 + PC2 + PC3
+The "raw model" is specified by the formula parameter, which is passed to stats::lm. 
+The pca_vars and n_pca_components parameters indicate that variables x2 to x10 
+will be used to extract three principal components. Subsequently, the "pca model" 
+is passed to stats::lm as follows: y ~ x1 + PC1 + PC2 + PC3.
 
-Setting the parameters lpca_center and lpca_scale to 'pca' specifies that before
-passing the data in pca_vars to stats::prcomp, centering and scaling will be 
-executed as outlined in the LearnPCA Step-by-Step PCA vignette: (https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf).
-Setting the miss_handler parameter to 'omit' specifies that the rows of the data 
-frame passed to swaprinc will be subset with stats::complete.cases.
+By setting the lpca_center and lpca_scale parameters to 'pca', the data in pca_vars 
+will be centered and scaled according to the guidelines in the 
+[LearnPCA Step-by-Step PCA vignette](https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf) before being passed to stats::prcomp. The miss_handler parameter, set to 'omit', 
+ensures that only complete cases are included by subsetting the data frame rows 
+with stats::complete.cases.
+
+As a recommendation, use broom and broom.mixed to summarize model results to avoid 
+lengthy summaries.
 
 ```{r simple}
 library(swaprinc)
@@ -93,12 +96,14 @@ library(swaprinc)
 
 ## The Motivating Example
 
-A chronic difficulty in applied statistics and data science is logistic regression
-with a set of categorical independent variables.  In this motivating example,
-swaprinc will be used to compare a 'raw' logistic regression model with 
-five categorical independent variables to a 'pca' logistic regression model where 
-Gifi::princals will be used to swap out six of the independent variables for 
-the first three principal components.  
+A common challenge in applied statistics and data science involves performing 
+logistic regression with a set of categorical independent variables. In this 
+motivating example, swaprinc is employed to compare a 'raw' logistic regression 
+model containing seven categorical independent variables with a 'pca' logistic 
+regression model. The latter model replaces six of the independent variables with 
+their first three principal components, using Gifi::princals to extract principal
+components. For a comprehensive tutorial on Gifi, refer to 
+[Nonlinear Principal Components Analysis: Multivariate Analysis with Optimal Scaling (MVAOS)](https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html#2_Package).
 
 ```{r motivation}
  # Create a small simulated dataset
@@ -157,11 +162,10 @@ the first three principal components.
 
 ## Compare Multiple Models
 
-Using the same data set for the logistic regression model above, it would be
-useful to compare results for different ways of swapping variables.  In the 
-example presented below, the compswap helper function is used to compare results
-with 2, 3, 4, and 5 principal components swapped in for the six raw independent
-variables.
+Utilizing the same dataset as in the logistic regression model mentioned earlier, 
+it is beneficial to compare outcomes for various swaps. In the example below, 
+the compswap helper function facilitates the comparison of results with 2, 3, 4, 
+and 5 principal components replacing six original independent variables.
 
 ```{r compswap}
   # Run swaprinc with prc_eng set to Gifi
@@ -174,13 +178,10 @@ variables.
 
   # Show available models
   summary(compswap_results$all_models)
-
-  # Summarize raw model
-  broom::tidy(compswap_results$all_models$model_raw)
-  
-  # Summarize pca model with 5 principal components
-  broom::tidy(compswap_results$all_models$model_pca_4)
   
   # Get model comparisons
   print(compswap_results$all_comparisons)
+  
+  # View model summaries
+  lapply(compswap_results$all_models, broom::tidy)
 ```
