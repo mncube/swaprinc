@@ -80,10 +80,10 @@ library(swaprinc)
                               miss_handler = "omit")
   
   # Summarize raw model
-  summary(swaprinc_result$model_raw)
+  broom::tidy(swaprinc_result$model_raw)
   
   # Summarize pca model
-  summary(swaprinc_result$model_pca)
+  broom::tidy(swaprinc_result$model_pca)
   
   # Get model comparisons
   print(swaprinc_result$comparison)
