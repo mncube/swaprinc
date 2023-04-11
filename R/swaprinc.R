@@ -69,6 +69,83 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
                      gifi_princals_options = "noaddpars",
                      gifi_trans_options = "noaddpars") {
 
+  invisible(utils::capture.output(output <- swaprinc_loud(data, formula, engine, prc_eng, pca_vars,
+                          n_pca_components, norun_raw, lpca_center, lpca_scale,
+                          lpca_undo, gifi_transform, gifi_trans_vars,
+                          gifi_trans_dims, no_tresp, miss_handler,
+                          model_options,
+                          prcomp_options,
+                          gifi_princals_options,
+                          gifi_trans_options)))
+
+  return(output)
+
+}
+
+
+#' Swap in Principal Components (Loud Version of swaprinc)
+#'
+#'
+#'
+#' @param data A dataframe
+#' @param formula A quoted model formula
+#' @param engine The engine for fitting the model.  Options are 'stats' or 'lme4'.
+#' @param prc_eng Then engine or extracting principal components.  Options are
+#' 'stats', 'Gifi', and 'stats_Gifi'.  The stats_Gifi engine uses
+#' tidyselect::where(is.numeric) to select the pca_vars for stats::prcomp and
+#' -tidyselect::where(is.numeric) to select the pca_vars for Gifi::princals.
+#' @param pca_vars Variables to include in the principal component analysis.
+#' These variables will be swapped out for principal components
+#' @param n_pca_components The number of principal components to include in the
+#' model. If using a complex prc_eng (i.e., stats_Gifi) then provide a named
+#' vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).
+#' @param norun_raw Include regression on raw variables if TRUE, exclude if FALSE.
+#' @param lpca_center Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
+#' numeric variables will be included in the centering.  Parameter takes values
+#' 'all' to center raw and pca variables, 'raw' to only center variables for the
+#' raw variable model fitting, 'pca' to only center pca_vars before pca regression
+#' model fitting, and 'none' to skip lpca centering.
+#' @param lpca_scale Scale data as in the LearnPCA Step-by-Step PCA vignette.  Only
+#' numeric variables will be included in the scaling.  Parameter takes values
+#' 'all' to scale raw and pca variables, 'raw' to only scale variables for the
+#' raw variable model fitting, 'pca' to only scale pca_vars before pca regression
+#' model fitting, and 'none' to skip lpca scaling.
+#' @param lpca_undo Undo centering and scaling of pca_vars as in the LearnPCA
+#' Step-by-Step PCA vignette.
+#' @param gifi_transform Use Gifi optimal scaling to transform a set of variables.
+#' Parameter takes values 'none', 'all', 'raw', and 'pca'
+#' @param gifi_trans_vars A vector of variables to include in the Gifi optimal
+#' scaling transformation
+#' @param gifi_trans_dims Number of dimensions to extract in the Gifi optimal
+#' scaling transformation algorithm
+#' @param no_tresp When set to TRUE, no_tresp (No transform response) will exclude
+#' the response variable from from pre-modeling and pre-pca transformations.
+#' Specifically, setting no_tresp to TRUE will exclude the response variable from
+#' the transformation specified in lpca_center and lpca_scale.
+#' @param miss_handler Choose how swaprinc handles missing data on the input
+#' data.  Default is 'none'.  Use 'omit' for complete case analysis.
+#' @param model_options Pass additional arguments to statistical modeling functions
+#' (i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
+#' (no additional parameters)
+#' @param prcomp_options Pass additional arguments to stats::prcomp for
+#' prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
+#' (no additional parameters)
+#' @param gifi_princals_options Pass additional arguments to Gifi::princals for
+#' prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
+#' (no additional parameters)
+#' @param gifi_trans_options Pass additional arguments to Gifi::princals for
+#' gifi_transform.  Default is 'noaddpars' (no additional parameters)
+#'
+#' @return A list with fitted models
+swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
+                     n_pca_components, norun_raw, lpca_center, lpca_scale,
+                     lpca_undo, gifi_transform, gifi_trans_vars,
+                     gifi_trans_dims, no_tresp, miss_handler,
+                     model_options,
+                     prcomp_options,
+                     gifi_princals_options,
+                     gifi_trans_options) {
+
   # Missing data handler
   if (miss_handler == "omit"){
     data <- data[stats::complete.cases(data), ]
@@ -86,7 +163,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   }
 
   if(lpca_undo == TRUE & (lpca_scale == "none" | lpca_scale == "raw" |
-                                lpca_center == "none" | lpca_center == "raw" )) {
+                          lpca_center == "none" | lpca_center == "raw" )) {
     rlang::abort("To use lpca_undo, lpca_scale and lpca_center must be set
                  to 'all' or 'pca'")
   }
@@ -135,11 +212,11 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Create helper function for lpca center and scale
   lpca_cs <- function(df, scl, cnt){
-  if (no_tresp == TRUE){
-    df <- get_resp(df)
-    df_resp <- df$df_resp
-    df <- df$df_pred
-  }
+    if (no_tresp == TRUE){
+      df <- get_resp(df)
+      df_resp <- df$df_resp
+      df <- df$df_pred
+    }
     df <- scale(get_nums(df), scale = scl, center = cnt) %>%
       as.data.frame() %>%
       bind_nums(df)
@@ -159,9 +236,9 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
     # Get transformed data
     if(gifi_trans_options == "noaddpars"){
-      invisible(utils::capture.output(gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims)))
+      gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims)
     } else{
-      invisible(utils::capture.output(gifi_trans <- do.call(Gifi::princals, c(list(data = dftr, ndim = gifi_trans_dims), gifi_trans_options))))
+      gifi_trans <- do.call(Gifi::princals, c(list(data = dftr, ndim = gifi_trans_dims), gifi_trans_options))
     }
 
 
@@ -178,19 +255,19 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   fit_model <- function(data, formula, engine, model_options) {
     if (engine == "stats") {
       if(model_options == "noaddpars"){
-        invisible(utils::capture.output(glm_model <- try(stats::glm(formula, data), silent = TRUE)))
+        glm_model <- try(stats::glm(formula, data), silent = TRUE)
       } else{
-        invisible(utils::capture.output(glm_model <- try(do.call(stats::glm, c(list(formula = formula, data = data),
-                                            model_options)), silent = TRUE)))
+        glm_model <- try(do.call(stats::glm, c(list(formula = formula, data = data),
+                                               model_options)), silent = TRUE)
       }
       if (inherits(glm_model, "glm")) {
         return(glm_model)
       } else {
         if(model_options == "noaddpars"){
-          invisible(utils::capture.output(lm_model <- try(stats::lm(formula, data), silent = TRUE)))
+          lm_model <- try(stats::lm(formula, data), silent = TRUE)
         } else{
-          invisible(utils::capture.output(lm_model <- try(do.call(stats::lm, c(list(formula = formula, data = data),
-                                                 model_options)), silent = TRUE)))
+          lm_model <- try(do.call(stats::lm, c(list(formula = formula, data = data),
+                                               model_options)), silent = TRUE)
         }
         if (inherits(lm_model, "lm")) {
           return(lm_model)
@@ -200,19 +277,19 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
       }
     } else if (engine == "lme4") {
       if(model_options == "noaddpars"){
-        invisible(utils::capture.output(lmer_model <- try(lme4::lmer(formula, data), silent = TRUE)))
+        lmer_model <- try(lme4::lmer(formula, data), silent = TRUE)
       } else{
-        invisible(utils::capture.output(lmer_model <- try(do.call(lme4::lmer, c(list(formula = formula, data = data),
-                                             model_options)), silent = TRUE)))
+        lmer_model <- try(do.call(lme4::lmer, c(list(formula = formula, data = data),
+                                                model_options)), silent = TRUE)
       }
       if (inherits(lmer_model, "merMod")) {
         return(lmer_model)
       } else {
         if(model_options == "noaddpars"){
-          invisible(utils::capture.output(glmer_model <- try(lme4::glmer(formula, data), silent = TRUE)))
+          glmer_model <- try(lme4::glmer(formula, data), silent = TRUE)
         } else{
-          invisible(utils::capture.output(glmer_model <- try(do.call(lme4::glmer, c(list(formula = formula, data = data),
-                                                  model_options)), silent = TRUE)))
+          glmer_model <- try(do.call(lme4::glmer, c(list(formula = formula, data = data),
+                                                    model_options)), silent = TRUE)
         }
         if (inherits(glmer_model, "merMod")) {
           return(glmer_model)
@@ -227,7 +304,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Transform All Data using Gifi::princals
   if(gifi_transform == "all"){
-    invisible(utils::capture.output(data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)))
+    data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)
   }
 
   # Scale All Data and Raw Data According to LearnPCA
@@ -246,7 +323,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
     # Gifi trans data
     if(gifi_transform == "raw"){
-      invisible(utils::capture.output(df_raw <- gifi_trans(df_raw, gifi_trans_dims, gifi_trans_options)))
+      df_raw <- gifi_trans(df_raw, gifi_trans_dims, gifi_trans_options)
     }
 
     # Scale raw data only according to LearnPCA
@@ -258,7 +335,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
       df_raw <- lpca_cs(df_raw, scl = TRUE, cnt = FALSE)
     }
 
-    invisible(utils::capture.output(model_raw <- fit_model(df_raw, formula, engine, model_options)))
+    model_raw <- fit_model(df_raw, formula, engine, model_options)
   } else {
     model_raw <- NULL
   }
@@ -267,7 +344,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   # Gifi trans data
   if(gifi_transform == "pca"){
-    invisible(utils::capture.output(data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)))
+    data <- gifi_trans(data, gifi_trans_dims, gifi_trans_options)
   }
 
   if(lpca_center == "pca"){
@@ -294,9 +371,9 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   # Extraction helper functions
   extract_stats <- function(df = pca_data, comps = n_pca_components, prcomp_options){
     if(prcomp_options == "noaddpars"){
-      invisible(utils::capture.output(pca_result <- stats::prcomp(df)))
+      pca_result <- stats::prcomp(df)
     } else{
-      invisible(utils::capture.output(pca_result <- do.call(stats::prcomp, c(list(x = df), prcomp_options))))
+      pca_result <- do.call(stats::prcomp, c(list(x = df), prcomp_options))
     }
 
 
@@ -311,18 +388,18 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 
   extract_Gifi <- function(df = pca_data, comps = n_pca_components, gifi_princals_options){
     if(gifi_princals_options == "noaddpars"){
-      invisible(utils::capture.output(gifi_results <- Gifi::princals(df, ndim=comps)))
+      gifi_results <- Gifi::princals(df, ndim=comps)
     } else{
-      invisible(utils::capture.output(gifi_results <- do.call(Gifi::princals, c(list(data = df, ndim = comps), gifi_princals_options))))
+      gifi_results <- do.call(Gifi::princals, c(list(data = df, ndim = comps), gifi_princals_options))
     }
     pca_scores <- gifi_results$objectscores
   }
 
   # Run prc_eng
   if (prc_eng == "stats"){
-    invisible(utils::capture.output(pca_scores <- extract_stats(pca_data, n_pca_components, prcomp_options)))
+    pca_scores <- extract_stats(pca_data, n_pca_components, prcomp_options)
   } else if (prc_eng == "Gifi") {
-    invisible(utils::capture.output(pca_scores <- extract_Gifi(pca_data, n_pca_components, gifi_princals_options)))
+    pca_scores <- extract_Gifi(pca_data, n_pca_components, gifi_princals_options)
   } else if (prc_eng == "stats_Gifi"){
 
     # Split pca_data by
@@ -335,13 +412,13 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
     }
 
     #stats
-    invisible(utils::capture.output(pca_scores_stats <- extract_stats(df = pca_data_stats,
+    pca_scores_stats <- extract_stats(df = pca_data_stats,
                                       comps = n_pca_components[["stats"]],
-                                      prcomp_options)))
+                                      prcomp_options)
     #Gifi
-    invisible(utils::capture.output(pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
+    pca_scores_Gifi <- extract_Gifi(df = pca_data_Gifi,
                                     comps = n_pca_components[["Gifi"]],
-                                    gifi_princals_options)))
+                                    gifi_princals_options)
     #Collapse
     pca_scores <- cbind(pca_scores_stats, pca_scores_Gifi)
     n_pca_components <- sum(n_pca_components)
@@ -407,7 +484,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
   formula_pca <- replace_pca_vars_in_formula(formula, pca_vars, pca_terms)
 
   # Fit the PCA model
-  invisible(utils::capture.output(model_pca <- fit_model(data_pca, formula_pca, engine, model_options)))
+  model_pca <- fit_model(data_pca, formula_pca, engine, model_options)
 
   #Compare Models
   compare_models <- function(model_raw, model_pca) {

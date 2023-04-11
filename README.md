@@ -663,6 +663,15 @@ swapped in for the six raw independent variables.
                               .model_options_list = list(list(family = binomial(link = "logit"))))
 #> Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 
+  # Show available models
+  summary(compswap_results$all_models)
+#>             Length Class Mode
+#> model_raw   30     glm   list
+#> model_pca_1 30     glm   list
+#> model_pca_2 30     glm   list
+#> model_pca_3 30     glm   list
+#> model_pca_4 30     glm   list
+
   # Summarize raw model
   summary(compswap_results$all_models$model_raw)
 #> 
