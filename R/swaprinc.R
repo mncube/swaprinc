@@ -1,6 +1,9 @@
 #' Swap in Principal Components
 #'
-#'
+#' Compare a regression model using raw variables with another model where principal
+#' components are extracted from a subset of the raw independent variables, and
+#' a user-defined number of these principal components are then used to replace
+#' the original subset of variables in the regression model.
 #'
 #' @param data A dataframe
 #' @param formula A quoted model formula

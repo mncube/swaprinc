@@ -98,7 +98,10 @@ gifi_transform.  Default is 'noaddpars' (no additional parameters)}
 A list with fitted models
 }
 \description{
-Swap in Principal Components
+Compare a regression model using raw variables with another model where principal
+components are extracted from a subset of the raw independent variables, and
+a user-defined number of these principal components are then used to replace
+the original subset of variables in the regression model.
 }
 \examples{
 data(iris)
