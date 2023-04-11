@@ -69,7 +69,13 @@ compswap <- function(data, formula,
                      .gifi_princals_options_list = list("noaddpars"),
                      .gifi_trans_options_list = list("noaddpars")) {
 
-  n <- max(length(.pca_varlist), length(.n_pca_list))
+  n <- max(length(.pca_varlist), length(.n_pca_list), length(.prc_eng_list),
+           length(.lpca_center_list), length(.lpca_scale_list),
+           length(.lpca_undo_list), length(.gifi_transform_list),
+           length(.gifi_trans_vars_list), length(.gifi_trans_dims_list),
+           length(.no_tresp_list), length(.miss_handler_list),
+           length(.model_options_list), length(.prcomp_options_list),
+           length(.gifi_princals_options_list), length(.gifi_trans_options_list))
 
   # Recycle parameters to match the length of n
   .pca_varlist <- rep(.pca_varlist, length.out = n)
