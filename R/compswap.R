@@ -1,5 +1,13 @@
 #' Compare swaprinc Models
 #'
+#' @description
+#'
+#' The `swaprinc` function compares a regression model using raw variables to a
+#' model with principal components swapped in. The `compswap` function compares
+#' a regression model with raw variables to multiple models with principal
+#' components swapped in. Parameter lists are recycled to ensure they are the
+#' same length as the longest parameter list.
+#'
 #' @param data A dataframe
 #' @param formula A quoted model formula
 #' @param engine The engine for fitting the model.  Options are "stats" or"lme4".

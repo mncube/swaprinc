@@ -67,7 +67,11 @@ A list containing a list of fitted models and a comparison metrics
 data frame.
 }
 \description{
-Compare swaprinc Models
+The \code{swaprinc} function compares a regression model using raw variables to a
+model with principal components swapped in. The \code{compswap} function compares
+a regression model with raw variables to multiple models with principal
+components swapped in. Parameter lists are recycled to ensure they are the
+same length as the longest parameter list.
 }
 \examples{
 # Load the iris dataset
