@@ -35,8 +35,9 @@ swaprinc(
 
 \item{prc_eng}{Then engine or extracting principal components.  Options are
 'stats', 'Gifi', and 'stats_Gifi'.  The stats_Gifi engine uses
-tidyselect::where(is.numeric) to select the pca_vars for stats::prcomp and
--tidyselect::where(is.numeric) to select the pca_vars for Gifi::princals.}
+\code{tidyselect::where(is.numeric)} to select the pca_vars for \code{stats::prcomp} and
+\code{-tidyselect::where(is.numeric)} to select the pca_vars for \code{Gifi::princals}.
+Read Rossiter (2021) for more on princals.}
 
 \item{pca_vars}{Variables to include in the principal component analysis.
 These variables will be swapped out for principal components}
@@ -47,20 +48,21 @@ vector (i.e., n_pca_components = c("stats" = 2, "Gifi" = 3)).}
 
 \item{norun_raw}{Include regression on raw variables if TRUE, exclude if FALSE.}
 
-\item{lpca_center}{Center data as in the LearnPCA Step-by-Step PCA vignette.  Only
-numeric variables will be included in the centering.  Parameter takes values
-'all' to center raw and pca variables, 'raw' to only center variables for the
-raw variable model fitting, 'pca' to only center pca_vars before pca regression
-model fitting, and 'none' to skip lpca centering.}
+\item{lpca_center}{Center data as in the Step-by-Step PCA vignette
+(Harvey & Hanson, 2022).  Only numeric variables will be included in the
+centering.  Parameter takes values 'all' to center raw and pca variables, 'raw'
+to only center variables for the raw variable model fitting, 'pca' to only
+center pca_vars before pca regression model fitting, and 'none' to skip lpca
+centering.}
 
-\item{lpca_scale}{Scale data as in the LearnPCA Step-by-Step PCA vignette.  Only
+\item{lpca_scale}{Scale data as in the Step-by-Step PCA vignette.  Only
 numeric variables will be included in the scaling.  Parameter takes values
 'all' to scale raw and pca variables, 'raw' to only scale variables for the
 raw variable model fitting, 'pca' to only scale pca_vars before pca regression
 model fitting, and 'none' to skip lpca scaling.}
 
-\item{lpca_undo}{Undo centering and scaling of pca_vars as in the LearnPCA
-Step-by-Step PCA vignette.}
+\item{lpca_undo}{Undo centering and scaling of pca_vars as in the Step-by-Step
+PCA vignette.}
 
 \item{gifi_transform}{Use Gifi optimal scaling to transform a set of variables.
 Parameter takes values 'none', 'all', 'raw', and 'pca'}
@@ -71,7 +73,7 @@ scaling transformation}
 \item{gifi_trans_dims}{Number of dimensions to extract in the Gifi optimal
 scaling transformation algorithm}
 
-\item{no_tresp}{When set to TRUE, no_tresp (No transform response) will exclude
+\item{no_tresp}{When set to \code{TRUE}, no_tresp (No transform response) will exclude
 the response variable from from pre-modeling and pre-pca transformations.
 Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
@@ -80,18 +82,18 @@ the transformation specified in lpca_center and lpca_scale.}
 data.  Default is 'none'.  Use 'omit' for complete case analysis.}
 
 \item{model_options}{Pass additional arguments to statistical modeling functions
-(i.e., stats::lm, stats::glm, lme4::lmer, lme4::glmer) Default is 'noaddpars'
-(no additional parameters)}
+(i.e., \code{stats::lm}, \code{stats::glm}, \code{lme4::lmer}, \code{lme4::glmer}) Default is
+'noaddpars' (no additional parameters)}
 
-\item{prcomp_options}{Pass additional arguments to stats::prcomp for
+\item{prcomp_options}{Pass additional arguments to \code{stats::prcomp} for
 prc_eng = 'stats' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 (no additional parameters)}
 
-\item{gifi_princals_options}{Pass additional arguments to Gifi::princals for
+\item{gifi_princals_options}{Pass additional arguments to \code{Gifi::princals} for
 prc_eng = 'Gifi' and prc_eng = 'stats_Gifi' call. Default is 'noaddpars'
 (no additional parameters)}
 
-\item{gifi_trans_options}{Pass additional arguments to Gifi::princals for
+\item{gifi_trans_options}{Pass additional arguments to \code{Gifi::princals} for
 gifi_transform.  Default is 'noaddpars' (no additional parameters)}
 }
 \value{
@@ -109,4 +111,10 @@ res <- swaprinc(iris,
 "Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width",
 pca_vars = c("Sepal.Width", "Petal.Length", "Petal.Width"),
 n_pca_components = 2)
+}
+\references{
+\enumerate{
+\item Rossiter, D. G.  Nonlinear Principal Components Analysis: Multivariate Analysis with Optimal Scaling (MVAOS). (2021) \url{https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html}
+\item Harvey, D. T., & Hanson, B. A. Step-by-Step PCA. (2022) \url{https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf}
+}
 }
