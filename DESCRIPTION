@@ -1,10 +1,26 @@
 Package: swaprinc
-Title: Swap Principal Componens into Models
+Title: Swap Principal Components into Regression Models
 Version: 0.0.0.9000
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Obtaining accurate and stable estimates of regression coefficients 
+    can be challenging when the suggested statistical model has issues related 
+    to collinearity, convergence, or overfitting. One solution is to use 
+    principal component regression, as discussed in Chan and Park (2005) 
+    <doi:10.1080/01446190500039812>. The 'swaprinc' package streamlines 
+    comparisons between a raw regression model with the full set of raw 
+    independent variables and a pca regression model where principal components 
+    are estimated on a subset of the independent variables, then swapped into the 
+    regression model in place of those variables. The 'swaprinc' function compares 
+    one raw regression model to one PCA regression model, while the 'compswap' 
+    function compares one raw regression model to multiple PCA regression models. 
+    Package functions include parameters to center, scale, and undo centering and 
+    scaling, as described by Harvey and Hansen (2022) 
+    <https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf>. 
+    Additionally, the package supports using Gifi methods to extract principal 
+    components from categorical variables, as outlined by Rossiter (2021) 
+    <https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html#2_Package>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
