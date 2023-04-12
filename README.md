@@ -33,7 +33,7 @@ components are extracted with stats::prcomp.
 The “raw model” is specified by the formula parameter, which is passed
 to stats::lm. The pca_vars and n_pca_components parameters indicate that
 variables x2 to x10 will be used to extract three principal components.
-Subsequently, the “pca model” is passed to stats::lm as follows: y \~
+Subsequently, the “PCA model” is passed to stats::lm as follows: y \~
 x1 + PC1 + PC2 + PC3.
 
 By setting the lpca_center and lpca_scale parameters to ‘pca’, the data
