@@ -229,7 +229,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
     if(gifi_trans_options == "noaddpars"){
       gifi_trans <- Gifi::princals(dftr, ndim=gifi_trans_dims)
     } else{
-      gifi_trans <- do.call(Gifi::princals, c(list(data = dftr, ndim = gifi_trans_dims), gifi_trans_options))
+      gifi_trans <- do.call(Gifi::princals, c(list(data = substitute(dftr), ndim = gifi_trans_dims), gifi_trans_options))
     }
 
 
@@ -248,7 +248,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
       if(model_options == "noaddpars"){
         glm_model <- try(stats::glm(formula, data), silent = TRUE)
       } else{
-        glm_model <- try(do.call(stats::glm, c(list(formula = formula, data = data),
+        glm_model <- try(do.call(stats::glm, c(list(formula = formula, data = substitute(data)),
                                                model_options)), silent = TRUE)
       }
       if (inherits(glm_model, "glm")) {
@@ -257,7 +257,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
         if(model_options == "noaddpars"){
           lm_model <- try(stats::lm(formula, data), silent = TRUE)
         } else{
-          lm_model <- try(do.call(stats::lm, c(list(formula = formula, data = data),
+          lm_model <- try(do.call(stats::lm, c(list(formula = formula, data = substitute(data)),
                                                model_options)), silent = TRUE)
         }
         if (inherits(lm_model, "lm")) {
@@ -270,7 +270,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
       if(model_options == "noaddpars"){
         lmer_model <- try(lme4::lmer(formula, data), silent = TRUE)
       } else{
-        lmer_model <- try(do.call(lme4::lmer, c(list(formula = formula, data = data),
+        lmer_model <- try(do.call(lme4::lmer, c(list(formula = formula, data = substitute(data)),
                                                 model_options)), silent = TRUE)
       }
       if (inherits(lmer_model, "merMod")) {
@@ -279,7 +279,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
         if(model_options == "noaddpars"){
           glmer_model <- try(lme4::glmer(formula, data), silent = TRUE)
         } else{
-          glmer_model <- try(do.call(lme4::glmer, c(list(formula = formula, data = data),
+          glmer_model <- try(do.call(lme4::glmer, c(list(formula = formula, data = substitute(data)),
                                                     model_options)), silent = TRUE)
         }
         if (inherits(glmer_model, "merMod")) {
@@ -364,7 +364,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
     if(prcomp_options == "noaddpars"){
       pca_result <- stats::prcomp(df)
     } else{
-      pca_result <- do.call(stats::prcomp, c(list(x = df), prcomp_options))
+      pca_result <- do.call(stats::prcomp, c(list(x = substitute(df)), prcomp_options))
     }
 
 
@@ -381,7 +381,7 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
     if(gifi_princals_options == "noaddpars"){
       gifi_results <- Gifi::princals(df, ndim=comps)
     } else{
-      gifi_results <- do.call(Gifi::princals, c(list(data = df, ndim = comps), gifi_princals_options))
+      gifi_results <- do.call(Gifi::princals, c(list(data = substitute(df), ndim = comps), gifi_princals_options))
     }
     pca_scores <- gifi_results$objectscores
   }
