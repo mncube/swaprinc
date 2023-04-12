@@ -38,11 +38,11 @@ x1 + PC1 + PC2 + PC3.
 
 By setting the lpca_center and lpca_scale parameters to ‘pca’, the data
 in pca_vars will be centered and scaled according to the guidelines in
-the [LearnPCA Step-by-Step PCA
-vignette](https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf)
-before being passed to stats::prcomp. The miss_handler parameter, set to
-‘omit’, ensures that only complete cases are included by subsetting the
-data frame rows with stats::complete.cases.
+the [Step-by-Step
+PCA](https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf)
+vignette before being passed to stats::prcomp. The miss_handler
+parameter, set to ‘omit’, ensures that only complete cases are included
+by subsetting the data frame rows with stats::complete.cases.
 
 As a recommendation, use broom and broom.mixed to summarize model
 results to avoid lengthy summaries.
