@@ -51,9 +51,6 @@ will be centered and scaled according to the guidelines in the
 set to 'omit', ensures that only complete cases are included by subsetting the 
 data frame rows with stats::complete.cases.
 
-As a recommendation, use broom and broom.mixed to summarize model results to avoid 
-lengthy summaries.
-
 ```{r simple}
 library(swaprinc)
 
@@ -83,10 +80,10 @@ library(swaprinc)
                               miss_handler = "omit")
   
   # Summarize raw model
-  broom::tidy(swaprinc_result$model_raw)
+  summary(swaprinc_result$model_raw)
   
   # Summarize pca model
-  broom::tidy(swaprinc_result$model_pca)
+  summary(swaprinc_result$model_pca)
   
   # Get model comparisons
   print(swaprinc_result$comparison)
@@ -104,6 +101,11 @@ regression model. The latter model replaces six of the independent variables wit
 their first three principal components, using Gifi::princals to extract principal
 components. For a comprehensive tutorial on Gifi, refer to 
 [Nonlinear Principal Components Analysis: Multivariate Analysis with Optimal Scaling (MVAOS)](https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html#2_Package).
+
+I recommend using the 'broom' and 'broom.mixed' packages to summarize model 
+results when utilizing the '*_options' parameters for passing arguments to 
+functions within 'swaprinc'. This approach helps prevent 
+[overly extensive summaries caused by 'do.call'](https://stackoverflow.com/questions/75512192/r-do-call-function-returns-to-much/75512429#75512429).
 
 ```{r motivation}
  # Create a small simulated dataset

@@ -44,9 +44,6 @@ vignette before being passed to stats::prcomp. The miss_handler
 parameter, set to ‘omit’, ensures that only complete cases are included
 by subsetting the data frame rows with stats::complete.cases.
 
-As a recommendation, use broom and broom.mixed to summarize model
-results to avoid lengthy summaries.
-
 ``` r
 library(swaprinc)
 
@@ -76,32 +73,58 @@ library(swaprinc)
                               miss_handler = "omit")
   
   # Summarize raw model
-  broom::tidy(swaprinc_result$model_raw)
-#> # A tibble: 11 × 5
-#>    term        estimate std.error statistic  p.value
-#>    <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-#>  1 (Intercept)   1.75      0.384      4.56  4.94e- 5
-#>  2 x1            2.06      0.175     11.8   1.96e-14
-#>  3 x2            2.93      0.0298    98.5   2.23e-48
-#>  4 x3            0.0627    0.0760     0.826 4.14e- 1
-#>  5 x4            2.41      0.0637    37.8   2.35e-32
-#>  6 x5           -3.48      0.0447   -78.0   1.92e-44
-#>  7 x6            2.05      0.0350    58.5   1.31e-39
-#>  8 x7            1.50      0.0262    57.2   3.20e-39
-#>  9 x8            0.970     0.0253    38.3   1.41e-32
-#> 10 x9            2.12      0.0650    32.7   6.04e-30
-#> 11 x10           0.991     0.0379    26.2   2.37e-26
+  summary(swaprinc_result$model_raw)
+#> 
+#> Call:
+#> stats::lm(formula = formula, data = data)
+#> 
+#> Residuals:
+#>      Min       1Q   Median       3Q      Max 
+#> -2.22717 -0.55113  0.00573  0.45296  3.03938 
+#> 
+#> Coefficients:
+#>             Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)  1.75250    0.38418   4.562 4.94e-05 ***
+#> x1           2.06070    0.17472  11.794 1.96e-14 ***
+#> x2           2.93211    0.02976  98.525  < 2e-16 ***
+#> x3           0.06272    0.07596   0.826    0.414    
+#> x4           2.40907    0.06368  37.830  < 2e-16 ***
+#> x5          -3.48453    0.04467 -78.007  < 2e-16 ***
+#> x6           2.04578    0.03497  58.501  < 2e-16 ***
+#> x7           1.49816    0.02621  57.158  < 2e-16 ***
+#> x8           0.97008    0.02530  38.345  < 2e-16 ***
+#> x9           2.12426    0.06502  32.670  < 2e-16 ***
+#> x10          0.99118    0.03787  26.174  < 2e-16 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> Residual standard error: 1.064 on 39 degrees of freedom
+#> Multiple R-squared:  0.9999, Adjusted R-squared:  0.9999 
+#> F-statistic: 7.237e+04 on 10 and 39 DF,  p-value: < 2.2e-16
   
   # Summarize pca model
-  broom::tidy(swaprinc_result$model_pca)
-#> # A tibble: 5 × 5
-#>   term         estimate std.error statistic  p.value
-#>   <chr>           <dbl>     <dbl>     <dbl>    <dbl>
-#> 1 (Intercept)  4.13e-17    0.0370  1.12e-15 1.00e+ 0
-#> 2 x1           6.06e- 2    0.0405  1.50e+ 0 1.42e- 1
-#> 3 PC1          4.23e- 1    0.0196  2.16e+ 1 2.10e-25
-#> 4 PC2          3.69e- 1    0.0278  1.33e+ 1 3.62e-17
-#> 5 PC3         -1.51e- 1    0.0342 -4.42e+ 0 6.11e- 5
+  summary(swaprinc_result$model_pca)
+#> 
+#> Call:
+#> stats::lm(formula = formula, data = data)
+#> 
+#> Residuals:
+#>      Min       1Q   Median       3Q      Max 
+#> -0.47301 -0.16369 -0.03991  0.15923  0.48937 
+#> 
+#> Coefficients:
+#>               Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept)  4.130e-17  3.701e-02   0.000    1.000    
+#> x1           6.056e-02  4.050e-02   1.495    0.142    
+#> PC1          4.227e-01  1.955e-02  21.621  < 2e-16 ***
+#> PC2          3.692e-01  2.781e-02  13.275  < 2e-16 ***
+#> PC3         -1.513e-01  3.422e-02  -4.423 6.11e-05 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> Residual standard error: 0.2617 on 45 degrees of freedom
+#> Multiple R-squared:  0.9371, Adjusted R-squared:  0.9315 
+#> F-statistic: 167.6 on 4 and 45 DF,  p-value: < 2.2e-16
   
   # Get model comparisons
   print(swaprinc_result$comparison)
@@ -123,6 +146,12 @@ components. For a comprehensive tutorial on Gifi, refer to [Nonlinear
 Principal Components Analysis: Multivariate Analysis with Optimal
 Scaling
 (MVAOS)](https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html#2_Package).
+
+I recommend using the ‘broom’ and ‘broom.mixed’ packages to summarize
+model results when utilizing the ’\*\_options’ parameters for passing
+arguments to functions within ‘swaprinc’. This approach helps prevent
+[overly extensive summaries caused by
+‘do.call’](https://stackoverflow.com/questions/75512192/r-do-call-function-returns-to-much/75512429#75512429).
 
 ``` r
  # Create a small simulated dataset
