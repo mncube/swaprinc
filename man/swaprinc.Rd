@@ -78,7 +78,7 @@ the response variable from from pre-modeling and pre-pca transformations.
 Specifically, setting no_tresp to TRUE will exclude the response variable from
 the transformation specified in lpca_center and lpca_scale.}
 
-\item{miss_handler}{Choose how swaprinc handles missing data on the input
+\item{miss_handler}{Choose how \code{swaprinc} handles missing data on the input
 data.  Default is 'none'.  Use 'omit' for complete case analysis.}
 
 \item{model_options}{Pass additional arguments to statistical modeling functions
