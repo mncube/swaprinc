@@ -12,6 +12,13 @@ these variables have been swapped out for principal components.
 
 ## Installation
 
+You can install the released version of swaprinc from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("swaprinc")
+```
+
 You can install the development version of swaprinc from
 [GitHub](https://github.com/) with:
 
@@ -39,7 +46,7 @@ x1 + PC1 + PC2 + PC3.
 By setting the lpca_center and lpca_scale parameters to ‘pca’, the data
 in pca_vars will be centered and scaled according to the guidelines in
 the [Step-by-Step
-PCA](https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf)
+PCA](https://cran.r-project.org/package=LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf)
 vignette before being passed to stats::prcomp. The miss_handler
 parameter, set to ‘omit’, ensures that only complete cases are included
 by subsetting the data frame rows with stats::complete.cases.

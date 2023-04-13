@@ -64,7 +64,7 @@
 #'
 #' 1. Rossiter, D. G.  Nonlinear Principal Components Analysis: Multivariate Analysis with Optimal Scaling (MVAOS). (2021) <https://www.css.cornell.edu/faculty/dgr2/_static/files/R_html/NonlinearPCA.html>
 #'
-#' 2. Harvey, D. T., & Hanson, B. A. Step-by-Step PCA. (2022) <https://cran.r-project.org/web/packages/LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf>
+#' 2. Harvey, D. T., & Hanson, B. A. Step-by-Step PCA. (2022) <https://cran.r-project.org/package=LearnPCA/vignettes/Vig_03_Step_By_Step_PCA.pdf>
 #'
 #' @export
 #'
