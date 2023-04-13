@@ -167,7 +167,7 @@ functions within 'swaprinc'. This approach helps prevent
 Utilizing the same dataset as in the logistic regression model mentioned earlier, 
 it is beneficial to compare outcomes for various swaps. In the example below, 
 the compswap helper function facilitates the comparison of results with 2, 3, 4, 
-and 5 principal components replacing six original independent variables.
+and 5 principal components replacing six original independent variables. 
 
 ```{r compswap}
   # Run swaprinc with prc_eng set to Gifi

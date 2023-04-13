@@ -231,9 +231,9 @@ arguments to functions within ‘swaprinc’. This approach helps prevent
   
   # Get model comparisons
   print(swaprinc_result$comparison)
-#>   model pseudo_r_squared      AIC      BIC
-#> 1   Raw        0.8690138 37.07927 63.84759
-#> 2   PCA        0.4118838 50.76511 60.32522
+#>   model     logLik      AIC      BIC
+#> 1   Raw  -4.539636 37.07927 63.84759
+#> 2   PCA -20.382553 50.76511 60.32522
 ```
 
 ## Compare Multiple Models
@@ -265,12 +265,12 @@ original independent variables.
   
   # Get model comparisons
   print(compswap_results$all_comparisons)
-#>   model pseudo_r_squared      AIC      BIC   model_set
-#> 1   Raw        0.8690138 37.07927 63.84759   model_raw
-#> 2   PCA        0.3827987 50.78113 58.42923 model_pca_1
-#> 3   PCA        0.4118838 50.76511 60.32522 model_pca_2
-#> 4   PCA        0.6023670 39.56182 51.03395 model_pca_3
-#> 5   PCA        0.6648237 37.23265 50.61681 model_pca_4
+#>   model     logLik      AIC      BIC   model_set
+#> 1   Raw  -4.539636 37.07927 63.84759   model_raw
+#> 2   PCA -21.390567 50.78113 58.42923 model_pca_1
+#> 3   PCA -20.382553 50.76511 60.32522 model_pca_2
+#> 4   PCA -13.780908 39.56182 51.03395 model_pca_3
+#> 5   PCA -11.616326 37.23265 50.61681 model_pca_4
   
   # View model summaries
   lapply(compswap_results$all_models, broom::tidy)

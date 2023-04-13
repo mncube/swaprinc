@@ -497,25 +497,19 @@ swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
     # Create comparison metrics data frame
     if(is.null(model_raw) & inherits(model_pca, c("glm", "glmerMod"))) {
       # For glm and glmer models
-      null_log_likelihood <- -0.5 * pca_summary$null.deviance
-      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / null_log_likelihood)
 
       comparison <- data.frame(
         model = c("PCA"),
-        pseudo_r_squared = c(pca_mcfadden_pseudo_r_squared),
+        logLik = c(pca_summary$logLik),
         AIC = c(pca_summary$AIC),
         BIC = c(pca_summary$BIC)
       )
     } else if (inherits(model_raw, c("glm", "glmerMod")) & inherits(model_pca, c("glm", "glmerMod"))) {
       # For glm and glmer models
-      null_log_likelihood_raw <- -0.5 * raw_summary$null.deviance
-      raw_mcfadden_pseudo_r_squared <- 1 - (raw_summary$logLik / null_log_likelihood_raw)
-      null_log_likelihood_pca <- -0.5 * pca_summary$null.deviance
-      pca_mcfadden_pseudo_r_squared <- 1 - (pca_summary$logLik / null_log_likelihood_pca)
 
       comparison <- data.frame(
         model = c("Raw", "PCA"),
-        pseudo_r_squared = c(raw_mcfadden_pseudo_r_squared, pca_mcfadden_pseudo_r_squared),
+        logLik = c(raw_summary$logLik, pca_summary$logLik),
         AIC = c(raw_summary$AIC, pca_summary$AIC),
         BIC = c(raw_summary$BIC, pca_summary$BIC)
       )
