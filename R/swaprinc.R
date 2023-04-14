@@ -126,7 +126,7 @@ swaprinc <- function(data, formula, engine = "stats", prc_eng = "stats", pca_var
 #' @return (see swaprinc documentation)
 #'
 #' @examples \dontrun{
-#' (see swaprinc documentation)
+#' #(see swaprinc documentation)
 #' }
 swaprinc_loud <- function(data, formula, engine, prc_eng, pca_vars,
                      n_pca_components, norun_raw, lpca_center, lpca_scale,

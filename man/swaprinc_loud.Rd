@@ -73,7 +73,7 @@ Swap in Principal Components (Loud Version of swaprinc)
 }
 \examples{
 \dontrun{
-(see swaprinc documentation)
+#(see swaprinc documentation)
 }
 }
 \keyword{internal}
